@@ -2,6 +2,8 @@
 Lacks of resolver, proper event handling, grenades and was going to make this cheat look better aesthetically.
 
 Thanks to all the [yougame.biz](yougame.biz) pasters who made 2 pages of supremacy pastes and possibly make some dough with this. \
+Also thank you to pyro for not making faststop work LMAO
+Dead project as well along with HVH dying to the core.
 
 (c) penumbra
 

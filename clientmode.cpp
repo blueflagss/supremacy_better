@@ -51,10 +51,11 @@ bool Hooks::CreateMove( float time, CUserCmd* cmd ) {
 	const auto ebp = *reinterpret_cast< std::uintptr_t * >( reinterpret_cast< std::uintptr_t >( _AddressOfReturnAddress ( ) ) - sizeof ( std::uintptr_t * ) );
 
 #ifdef _DEBUG
+	std::uintptr_t* stack_ptr;
+	__asm mov stack_ptr, ebp
 
-	g_cl.m_packet = reinterpret_cast< bool * >( ebp - 0x1c );
-
-	g_cl.m_final_packet = reinterpret_cast< bool * >( ebp - 0x1b );
+	g_cl.m_packet = reinterpret_cast< bool* >( *reinterpret_cast< uintptr_t* >( stack_ptr ) - 0x1C );
+	g_cl.m_final_packet = reinterpret_cast< bool* >( *reinterpret_cast< uintptr_t* >( stack_ptr ) - 0x1B );
 
 #else // DEBUG
 

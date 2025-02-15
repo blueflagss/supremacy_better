@@ -27,7 +27,6 @@ using ulong_t = unsigned long;
 #include <string>
 #include <chrono>
 #include <thread>
-#include <mmsystem.h>
 #include <memory>
 #include <sstream>
 #include <unordered_map>
@@ -50,9 +49,6 @@ using ulong_t = unsigned long;
 #include "xorstr.h"
 #include "pe.h"
 #include "winapir.h"
-#include "primordial.h"
-#include "bell.h"
-#include "cod.h"
 #include "address.h"
 #include "util.h"
 #include "modules.h"
@@ -68,12 +64,9 @@ using ulong_t = unsigned long;
 #include "interfaces.h"
 #include "sdk.h"
 #include "csgo.h"
-#include "wavheader.h"
 #include "penetration.h"
 #include "netvars.h"
 #include "entoffsets.h"
-#include "ik_context.h"
-#include "bitvec.h"
 #include "entity.h"
 #include "rebuilt.h"
 #include "client.h"
@@ -85,7 +78,8 @@ using ulong_t = unsigned long;
 #include "lagrecord.h"
 #include "visuals.h"
 #include "movement.h"
-#include "bonesetup.h"
+#include "ik_context.h"
+#include "bone_setup.h"
 #include "hvh.h"
 #include "lagcomp.h"
 #include "aimbot.h"

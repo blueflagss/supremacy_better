@@ -38,17 +38,8 @@ public:
 		player->m_vecMins( )   = m_mins;
 		player->m_vecMaxs( )   = m_maxs;
 		player->SetAbsAngles( m_abs_ang );
-	//	player->SetAbsOrigin( m_origin );
+		player->SetAbsOrigin( m_origin );
 	}
-};
-
-enum VelocityDetail_t {
-	DETAIL_NONE,
-	DETAIL_ZERO,
-	DETAIL_RUNNING,
-	DETAIL_PERFECT,
-	DETAIL_CONSTANT,
-	DETAIL_ACCELERATING
 };
 
 class LagRecord {
@@ -72,7 +63,6 @@ public:
 	vec3_t m_mins;
 	vec3_t m_maxs;
 	ang_t  m_eye_angles;
-	float  m_freestand_dist;
 	ang_t  m_abs_ang;
 	float  m_body;
 	float  m_duck;
@@ -81,20 +71,18 @@ public:
 	C_AnimationLayer m_layers[ 13 ];
 	float            m_poses[ 24 ];
 	vec3_t           m_anim_velocity;
-	bool			 m_shifting;
-	VelocityDetail_t m_velocity_detail;
 
 	// bone stuff.
 	bool       m_setup;
-	BoneArray* m_bones;
+
 
 	// lagfix stuff.
 	bool   m_broke_lc;
-	//vec3_t m_origin;
+	vec3_t m_pred_origin;
 	vec3_t m_pred_velocity;
 	float  m_pred_time;
 	int    m_pred_flags;
-	bool   m_did_predict;
+	int	   m_arrival_tick;
 
 	// resolver stuff.
 	size_t m_mode;
@@ -102,21 +90,18 @@ public:
 	bool   m_shot;
 	float  m_away;
 	float  m_anim_time;
-	bool   m_flick;
-	int	   m_tick_flicked;
-	bool   m_triggered_balence_adjust;
 
 	// other stuff.
 	float  m_interp_time;
 public:
+	std::array< BoneArray, 128 > m_bones;
 
 	// default ctor.
 	__forceinline LagRecord( ) : 
 		m_setup{ false }, 
 		m_broke_lc{ false },
 		m_fake_walk{ false }, 
-		m_shot{ false },
-		m_flick { false },
+		m_shot{ false }, 
 		m_lag{}, 
 		m_bones{} {}
 
@@ -126,46 +111,37 @@ public:
 		m_broke_lc{ false },
 		m_fake_walk{ false },
 		m_shot{ false }, 
-		m_flick { false },
 		m_lag{}, 
 		m_bones{} {
 
-		store( player );
+		InitV( player );
 	}
 
 	// dtor.
 	__forceinline ~LagRecord( ){
-		// free heap allocated game mem.
-		g_csgo.m_mem_alloc->Free( m_bones );
 	}
 
 	__forceinline void invalidate( ) {
-		// free heap allocated game mem.
-		g_csgo.m_mem_alloc->Free( m_bones );
 
 		// mark as not setup.
 		m_setup = false;
-
-		// allocate new memory.
-		m_bones = ( BoneArray* )g_csgo.m_mem_alloc->Alloc( sizeof( BoneArray ) * 128 );
 	}
 
 	// function: allocates memory for SetupBones and stores relevant data.
-	void store( Player* player ) {
-		// allocate game heap.
-		m_bones = ( BoneArray* )g_csgo.m_mem_alloc->Alloc( sizeof( BoneArray ) * 128 );
-
+	void InitV( Player* player ) {
 		// player data.
 		m_player    = player;
 		m_immune    = player->m_fImmuneToGunGameDamageTime( );
 		m_tick      = g_csgo.m_cl->m_server_tick;
+
+		if ( player->m_pBoneCache( ) )
+			std::memcpy( m_bones.data( ), player->m_pBoneCache( ), sizeof( BoneArray ) * player->m_iBoneCount( ) );
 	
 		// netvars.
 		m_pred_time     = m_sim_time = player->m_flSimulationTime( );
 		m_old_sim_time  = player->m_flOldSimulationTime( );
 		m_pred_flags    = m_flags  = player->m_fFlags( );
-		//m_origin   = m_origin = player->m_vecOrigin( );
-		m_origin		= player->m_vecOrigin ( );
+		m_pred_origin   = m_origin = player->m_vecOrigin( );
 		m_old_origin    = player->m_vecOldOrigin( );
 		m_eye_angles    = player->m_angEyeAngles( );
 		m_abs_ang       = player->GetAbsAngles( );
@@ -174,6 +150,7 @@ public:
 		m_maxs          = player->m_vecMaxs( );
 		m_duck          = player->m_flDuckAmount( );
 		m_pred_velocity = m_velocity = player->m_vecVelocity( );
+		m_arrival_tick  = g_cl.m_latency - game::TIME_TO_TICKS( m_sim_time );
 
 		// save networked animlayers.
 		player->GetAnimLayers( m_layers );
@@ -183,7 +160,7 @@ public:
 		math::clamp( m_eye_angles.x, -90.f, 90.f );
 
 		// get lag.
-		m_lag = game::TIME_TO_TICKS( m_sim_time - m_old_sim_time ) + 1;
+		m_lag = game::TIME_TO_TICKS( m_sim_time - m_old_sim_time );
 
 		// compute animtime.
 		m_anim_time = m_old_sim_time + g_csgo.m_globals->m_interval;
@@ -192,28 +169,22 @@ public:
 	// function: restores 'predicted' variables to their original.
 	__forceinline void predict( ) {
 		m_broke_lc      = false;
-		//m_origin   = m_origin;
+		m_pred_origin   = m_origin;
 		m_pred_velocity = m_velocity;
 		m_pred_time     = m_sim_time;
 		m_pred_flags    = m_flags;
-		m_did_predict = false;
-		m_shifting = false;
 	}
 
 	// function: writes current record to bone cache.
 	__forceinline void cache( ) {
-		// get bone cache ptr.
-		CBoneCache* cache = &m_player->m_BoneCache( );
 
-		cache->m_pCachedBones    = m_bones;
-		cache->m_CachedBoneCount = 128;
-
-		m_player->m_vecOrigin( ) = m_origin;
+		m_player->m_vecOrigin( ) = m_pred_origin;
 		m_player->m_vecMins( )   = m_mins;
 		m_player->m_vecMaxs( )   = m_maxs;
+		memcpy( m_player->m_pBoneCache( ), m_bones.data( ), sizeof( BoneArray ) * m_player->m_iBoneCount( ) );
 
-		m_player->SetAbsAngles( m_abs_ang );
-	//	m_player->SetAbsOrigin( m_origin );
+		//m_player->SetAbsAngles( m_abs_ang );
+		//m_player->SetAbsOrigin( m_pred_origin );
 	}
 
 	__forceinline bool dormant( ) {
@@ -226,16 +197,18 @@ public:
 
 	// function: checks if LagRecord obj is hittable if we were to fire at it now.
 	bool valid( ) {
+		// no more hit bad records.
+		if ( m_sim_time < m_old_sim_time )
+			return false;
+
 		// use prediction curtime for this.
-		float curtime = g_cl.m_local->alive ( ) ? game::TICKS_TO_TIME( g_cl.m_local->m_nTickBase( ) ) : g_csgo.m_globals->m_curtime;
+		const auto curtime = g_cl.m_local->alive( ) ? game::TICKS_TO_TIME( g_cl.m_local->m_nTickBase( ) ) : g_csgo.m_globals->m_curtime;
 
 		// correct is the amount of time we have to correct game time,
 		float correct = g_cl.m_lerp + g_cl.m_latency;
 
 		// stupid fake latency goes into the incoming latency.
 		float in = g_csgo.m_net->GetLatency( INetChannel::FLOW_INCOMING );
-		float out = g_csgo.m_net->GetLatency ( INetChannel::FLOW_OUTGOING );
-		
 		correct += in;
 
 		// check bounds [ 0, sv_maxunlag ]
@@ -243,6 +216,6 @@ public:
 
 		// calculate difference between tick sent by player and our latency based tick.
 		// ensure this record isn't too old.
-		return std::fabs( correct - ( curtime - m_sim_time ) ) < 0.2f;
+		return std::abs( correct - ( curtime - m_sim_time ) ) <= 0.19f;
 	}
 };

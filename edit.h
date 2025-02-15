@@ -14,12 +14,11 @@ public:
 		m_show      = true;
 	}
 
-	__forceinline void setup( const std::string &label, const std::string &file_id, size_t limit = 3, bool use_str = false ) {
+	__forceinline void setup( const std::string &label, const std::string &file_id, size_t limit = 3 ) {
 		m_label   = label;
 		m_file_id = file_id;
 		m_limit   = limit;
 		m_base_h  = m_h = 15 + EDIT_BOX_HEIGHT;
-		m_use_str = use_str;
 	}
 
 	__forceinline int get( ) {
@@ -27,13 +26,6 @@ public:
 			return -1;
 
 		return std::stoi( m_text );
-	}
-
-	__forceinline const std::string& get_text ( ) {
-		if ( m_text.empty ( ) )
-			return "";
-
-		return m_text;
 	}
 
 	__forceinline void set( int val ) {
@@ -54,7 +46,6 @@ protected:
 	size_t		m_limit;
 	bool		m_typing;
 	bool		m_old_typing;
-	bool m_use_str;
 
 protected:
 	void draw( ) override;

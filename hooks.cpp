@@ -117,84 +117,85 @@ void Force_proxy( CRecvProxyData *data, Address ptr, Address out ) {
 		g_hooks.m_Force_original( data, ptr, out );
 }
 
-void Hooks::init( ) {
+void Hooks::Init( ) {
 	// hook wndproc.
 	m_old_wndproc = ( WNDPROC )g_winapi.SetWindowLongA( g_csgo.m_game->m_hWindow, GWL_WNDPROC, util::force_cast< LONG >( Hooks::WndProc ) );
 
 	// setup normal VMT hooks.
-	m_panel.init( g_csgo.m_panel );
+	m_panel.Init( g_csgo.m_panel );
 	m_panel.add( IPanel::PAINTTRAVERSE, util::force_cast( &Hooks::PaintTraverse ) );
 
-	m_client.init( g_csgo.m_client );
+	m_client.Init( g_csgo.m_client );
 	m_client.add( CHLClient::LEVELINITPREENTITY, util::force_cast( &Hooks::LevelInitPreEntity ) );
 	m_client.add( CHLClient::LEVELINITPOSTENTITY, util::force_cast( &Hooks::LevelInitPostEntity ) );
 	m_client.add( CHLClient::LEVELSHUTDOWN, util::force_cast( &Hooks::LevelShutdown ) );
 	//m_client.add( CHLClient::INKEYEVENT, util::force_cast( &Hooks::IN_KeyEvent ) );
 	m_client.add( CHLClient::FRAMESTAGENOTIFY, util::force_cast( &Hooks::FrameStageNotify ) );
 
-	m_engine.init( g_csgo.m_engine );
+	m_engine.Init( g_csgo.m_engine );
 	m_engine.add( IVEngineClient::ISCONNECTED, util::force_cast( &Hooks::IsConnected ) );
 	m_engine.add( IVEngineClient::ISHLTV, util::force_cast( &Hooks::IsHLTV ) );
-	m_engine.add ( IVEngineClient::GETSCREENASPECTRATIO, util::force_cast ( &Hooks::GetScreenAspectRatio ) );
 
-	//m_engine_sound.init( g_csgo.m_sound );
-	//m_engine_sound.add( IEngineSound::EMITSOUND, util::force_cast( &Hooks::EmitSound ) );
+	m_engine_sound.Init( g_csgo.m_sound );
+	m_engine_sound.add( IEngineSound::EMITSOUND, util::force_cast( &Hooks::EmitSound ) );
 
-	m_prediction.init( g_csgo.m_prediction );
+	m_prediction.Init( g_csgo.m_prediction );
+	m_prediction.add( CPrediction::POSTNETWORKDATARECEIVED, util::force_cast( &Hooks::PostNetworkDataReceived ) );
+	m_prediction.add( CPrediction::PREENTITYPACKETRECEIVED, util::force_cast( &Hooks::PreEntityPacketReceived ) );
 	m_prediction.add( CPrediction::INPREDICTION, util::force_cast( &Hooks::InPrediction ) );
 	m_prediction.add( CPrediction::RUNCOMMAND, util::force_cast( &Hooks::RunCommand ) );
 
-	m_client_mode.init( g_csgo.m_client_mode );
+	m_client_mode.Init( g_csgo.m_client_mode );
 	m_client_mode.add( IClientMode::SHOULDDRAWPARTICLES, util::force_cast( &Hooks::ShouldDrawParticles ) );
 	m_client_mode.add( IClientMode::SHOULDDRAWFOG, util::force_cast( &Hooks::ShouldDrawFog ) );
 	m_client_mode.add( IClientMode::OVERRIDEVIEW, util::force_cast( &Hooks::OverrideView ) );
 	m_client_mode.add( IClientMode::CREATEMOVE, util::force_cast( &Hooks::CreateMove ) );
 	m_client_mode.add( IClientMode::DOPOSTSPACESCREENEFFECTS, util::force_cast( &Hooks::DoPostScreenSpaceEffects ) );
 
-	m_surface.init( g_csgo.m_surface );
+	m_surface.Init( g_csgo.m_surface );
 	//m_surface.add( ISurface::GETSCREENSIZE, util::force_cast( &Hooks::GetScreenSize ) );
 	m_surface.add( ISurface::LOCKCURSOR, util::force_cast( &Hooks::LockCursor ) );
 	m_surface.add( ISurface::PLAYSOUND, util::force_cast( &Hooks::PlaySound ) );
 	m_surface.add( ISurface::ONSCREENSIZECHANGED, util::force_cast( &Hooks::OnScreenSizeChanged ) );
 
-	m_model_render.init( g_csgo.m_model_render );
+	m_model_render.Init( g_csgo.m_model_render );
 	m_model_render.add( IVModelRender::DRAWMODELEXECUTE, util::force_cast( &Hooks::DrawModelExecute ) );
 
-	m_render_view.init( g_csgo.m_render_view );
+	m_render_view.Init( g_csgo.m_render_view );
 	m_render_view.add( IVRenderView::SCENEEND, util::force_cast( &Hooks::SceneEnd ) );
 
-	m_shadow_mgr.init( g_csgo.m_shadow_mgr );
+	m_shadow_mgr.Init( g_csgo.m_shadow_mgr );
 	m_shadow_mgr.add( IClientShadowMgr::COMPUTESHADOWDEPTHTEXTURES, util::force_cast( &Hooks::ComputeShadowDepthTextures ) );
 
-	m_view_render.init( g_csgo.m_view_render );
+	m_view_render.Init( g_csgo.m_view_render );
 	m_view_render.add( CViewRender::ONRENDERSTART, util::force_cast( &Hooks::OnRenderStart ) );
 	m_view_render.add( CViewRender::RENDERVIEW, util::force_cast( &Hooks::RenderView ) );
 	m_view_render.add( CViewRender::RENDER2DEFFECTSPOSTHUD, util::force_cast( &Hooks::Render2DEffectsPostHUD ) );
 	m_view_render.add( CViewRender::RENDERSMOKEOVERLAY, util::force_cast( &Hooks::RenderSmokeOverlay ) );
 
-	m_match_framework.init( g_csgo.m_match_framework );
+	m_match_framework.Init( g_csgo.m_match_framework );
 	m_match_framework.add( CMatchFramework::GETMATCHSESSION, util::force_cast( &Hooks::GetMatchSession ) );
 
-	m_material_system.init( g_csgo.m_material_system );
+	m_material_system.Init( g_csgo.m_material_system );
 	m_material_system.add( IMaterialSystem::OVERRIDECONFIG, util::force_cast( &Hooks::OverrideConfig ) );
 
-	m_fire_bullets.init( g_csgo.TEFireBullets );
+	m_fire_bullets.Init( g_csgo.TEFireBullets );
 	m_fire_bullets.add( 7, util::force_cast( &Hooks::PostDataUpdate ) );
 
-	m_client_state.init( g_csgo.m_hookable_cl );
-	//client_state.add ( CClientState::PACKETSTART, util::force_cast ( &Hooks::PacketStart ) );
+	//m_client_state.init( g_csgo.m_hookable_cl );
 	//m_client_state.add( CClientState::TEMPENTITIES, util::force_cast( &Hooks::TempEntities ) );
 
 	// register our custom entity listener.
 	// todo - dex; should we push our listeners first? should be fine like this.
-	g_custom_entity_listener.init( );
+	g_custom_entity_listener.Init( );
 
 	// cvar hooks.
-	m_net_earlier_temp_ents.init( g_csgo.net_earliertempents ); // 85 C0 74 05 E8 ? ? ? ? 84 DB 0F 84
-	m_net_earlier_temp_ents.add( ConVar::GETBOOL, util::force_cast( &Hooks::NetEarlierTempEntsGetBool ) );
+	m_debug_spread.Init( g_csgo.net_showfragments );
+	m_debug_spread.add( ConVar::GETINT, util::force_cast( &Hooks::DebugSpreadGetInt ) );
 
-	m_net_show_fragments.init( g_csgo.net_showfragments );
+	m_net_show_fragments.Init( g_csgo.net_showfragments );
 	m_net_show_fragments.add( ConVar::GETBOOL, util::force_cast( &Hooks::NetShowFragmentsGetBool ) );
+	net_earliertempents.add( ConVar::GETBOOL, util::force_cast( &Hooks::NetEarlierTempEnts ) );
 
 	// set netvar proxies.
 	g_netvars.SetProxy( HASH( "DT_CSPlayer" ), HASH( "m_angEyeAngles[0]" ), Pitch_proxy, m_Pitch_original );

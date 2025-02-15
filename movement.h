@@ -16,6 +16,7 @@ public:
 
 public:
 	void JumpRelated( );
+	void FastStop( );
 	void DirectionalStrafe ( CUserCmd *ucmd, const ang_t &old_angs );
 	void Strafe( CUserCmd *cmd, const ang_t &old_angs );
 	void DoPrespeed( );
@@ -26,7 +27,6 @@ public:
 	void AutoPeek( );
 	void QuickStop( );
 	void FakeWalk( );
-	void FastStop( );
 };
 
 extern Movement g_movement;

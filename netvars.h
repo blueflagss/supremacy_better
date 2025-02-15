@@ -22,7 +22,7 @@ public:
 	// ctor.
     Netvars( ) : m_offsets{} {}
 
-    void init( ) {
+    void Init( ) {
 		ClientClass *list;
 
 		// sanity check on client.
@@ -118,24 +118,24 @@ public:
 		// get datamap and verify.
 		map = ptr.at( 2 ).sub( 4 ).as< datamap_t* >( );
 
-		if( !map || !map->m_size || map->m_size > 200 || !map->m_desc || !map->m_name )
+		if( !map || !map->data_num_fields || map->data_num_fields > 200 || !map->data_desc || !map->data_class_name )
 			return;
 
 		// hash table name.
-		base = FNV1a::get( map->m_name );
+		base = FNV1a::get( map->data_class_name );
 
-		for( int i{}; i < map->m_size; ++i ) {
-			entry = &map->m_desc[ i ];
-			if( !entry->m_name )
+		for( int i{}; i < map->data_num_fields; ++i ) {
+			entry = &map->data_desc[ i ];
+			if( !entry->field_name )
 				continue;
 
 			// hash var name.
-			var = FNV1a::get( entry->m_name );
+			var = FNV1a::get( entry->field_name );
 
 			// if we dont have this var stored yet.
 			if( !m_offsets[ base ][ var ].m_offset ) {
 				m_offsets[ base ][ var ].m_datamap_var = true;
-				m_offsets[ base ][ var ].m_offset      = ( size_t )entry->m_offset[ TD_OFFSET_NORMAL ];
+				m_offsets[ base ][ var ].m_offset      = ( size_t )entry->field_offset;
 				m_offsets[ base ][ var ].m_prop_ptr    = nullptr;
 			}
 		}
@@ -157,7 +157,27 @@ public:
 		return m_offsets[ table ][ prop ].m_prop_ptr->m_ProxyFn;
 	}
 
-	// set netvar proxy.
+	std::size_t GetOffset( datamap_t* datamap, const hash32_t& var_hash ) {
+		while ( datamap ) {
+			for ( int i = 0; i < datamap->data_num_fields; i++ ) {
+				if ( !datamap->data_desc[ i ].field_name )
+					continue;
+
+				if ( CONST_HASH( datamap->data_desc[ i ].field_name ) == var_hash )
+					return datamap->data_desc[ i ].field_offset;
+
+				if ( datamap->data_desc[ i ].field_type == FIELD_EMBEDDED && datamap->data_desc[ i ].td )
+					if ( const std::size_t offset = GetOffset( datamap->data_desc[ i ].td, var_hash ); offset != 0 )
+						return offset;
+			}
+
+			datamap = datamap->base_map;
+		}
+
+		return 0x0;
+	}
+	// se
+	// t netvar proxy.
 	__forceinline void SetProxy( hash32_t table, hash32_t prop, void* proxy, RecvVarProxy_t &original ) {
 		auto netvar_entry = m_offsets[ table ][ prop ];
 

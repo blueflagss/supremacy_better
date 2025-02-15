@@ -150,8 +150,11 @@ public:
 	PAD( 0x134 );                               // 0x4CB8
 	CEventInfo*     m_events;					// 0x4DEC
 
+	__forceinline int& m_nSignonState( ) {
+		return *reinterpret_cast< int* >( reinterpret_cast< uintptr_t >( this ) + 0x108 );
+	}
+
 	enum indices : size_t {
-		PACKETSTART = 5,
 		PACKETEND = 6,
 		TEMPENTITIES = 36,
 		SVCMSG_VOICEDATA = 24
@@ -184,7 +187,6 @@ public:
 		//ISTAKINGSCREENSHOT     = 92,
 		ISHLTV                   = 93,
 		//SETOCCLUSIONPARAMETERS = 96,
-		GETSCREENASPECTRATIO	 = 101,
 		EXECUTECLIENTCMD         = 108,
 		CLIENTCMDUNRESTRICTED	 = 114
 	};

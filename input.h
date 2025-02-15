@@ -42,9 +42,9 @@ public:
 
 class CUserCmd {
 public:
-	__forceinline CUserCmd( ) { reset( ); }
+	__forceinline CUserCmd( ) { post_update( ); }
 
-	__forceinline void reset( ) {
+	__forceinline void post_update( ) {
 		m_command_number   = 0;
 		m_tick       = 0;
 		m_view_angles.clear( );

@@ -40,7 +40,7 @@ public:
 		return m_color;
 	}
 
-	static void init( );
+	static void Init( );
 
 	static __forceinline Color ColorFromPos( int x, int y ) {
 		return *( Color* )( gradient.get( ) + x + y * COLORPICKER_PICKER_SIZE );

@@ -2,7 +2,7 @@
 
 class Hooks {
 public:
-	void init( );
+	void Init( );
 
 public:
 	// forward declarations
@@ -52,7 +52,6 @@ public:
 	using OverrideConfig_t             = bool( __thiscall* )( void*, MaterialSystem_Config_t*, bool );
 	using PostDataUpdate_t             = void( __thiscall* )( void*, DataUpdateType_t );
 	using TempEntities_t               = bool( __thiscall* )( void*, void * );
-	using PacketStart_t = int ( __thiscall * )( void *, int, int );
 	using EmitSound_t                  = void( __thiscall* )( void*, IRecipientFilter&, int, int, const char*, unsigned int, const char*, float, float, int, int, int, const vec3_t*, const vec3_t*, void*, bool, float, int );
 	// using PreDataUpdate_t            = void( __thiscall* )( void*, DataUpdateType_t );
 	using CalcView_t				   = void ( __thiscall * ) ( void*, vec3_t &, ang_t &, float &, float &, float & );
@@ -60,11 +59,10 @@ public:
 	using NotifyOnLayerChangeWeight_t = void ( __thiscall * ) ( void *, const C_AnimationLayer *, const float );
 	using GetEyeAngles_t = ang_t & ( __thiscall * ) ( void * );
 	using AccumulateLayers_t = void ( __thiscall * ) ( void *, void *setup, vec3_t &pos, void *q, float time );
-	using PhysicsSimulate_t = void ( __thiscall * )( void * );
-	using GetScreenAspectRatio_t = float ( __thiscall * )( void *, int, int );
+	using PostNetworkDataReceived_t = void( __thiscall* ) ( void*, int commands_acknowledged );
+	using PreEntityPacketReceived_t = void( __thiscall* ) ( void*, int commands_acknowledged, int current_world_update_packet, int server_ticks_elapsed );
 public:
 	bool                     TempEntities( void *msg );
-	int PacketStart ( int incoming_sequence, int outgoing_acknowledged );
 	void                     PaintTraverse( VPANEL panel, bool repaint, bool force );
 	bool                     DoPostScreenSpaceEffects( CViewSetup* setup );
 	bool                     CreateMove( float input_sample_time, CUserCmd* cmd );
@@ -86,6 +84,8 @@ public:
 	void                     LockCursor( );
 	void                     PlaySound( const char* name );
 	void                     OnScreenSizeChanged( int oldwidth, int oldheight );
+	void					 PreEntityPacketReceived( int commands_acknowledged, int current_world_update_packet, int server_ticks_elapsed );
+	void					 PostNetworkDataReceived( int commands_acknowledged );
 	void                     RunCommand( Entity* ent, CUserCmd* cmd, IMoveHelper* movehelper );
 	int                      SendDatagram( void* data );
 	void                     ProcessPacket( void* packet, bool header );
@@ -94,15 +94,13 @@ public:
 	void                     DrawModelExecute( uintptr_t ctx, const DrawModelState_t& state, const ModelRenderInfo_t& info, matrix3x4_t* bone );
 	void                     ComputeShadowDepthTextures( const CViewSetup& view, bool unk );
 	int                      DebugSpreadGetInt( );
-	bool NetEarlierTempEntsGetBool ( );
+	bool					 NetEarlierTempEnts( );
 	bool                     NetShowFragmentsGetBool( );
 	void                     DoExtraBoneProcessing( int a2, int a3, int a4, int a5, int a6, int a7 );
-	void					 PhysicsSimulate ( );
 	void                     BuildTransformations( int a2, int a3, int a4, int a5, int a6, int a7 );
 	void					 CalcView ( vec3_t &eye_origin, ang_t &eye_angles, float &z_near, float &z_far, float &fov );
 	bool                     IsConnected( );
 	bool                     IsHLTV( );
-	float					 GetScreenAspectRatio ( int viewportWidth, int viewportHeight );
 	void                     EmitSound( IRecipientFilter& filter, int iEntIndex, int iChannel, const char* pSoundEntry, unsigned int nSoundEntryHash, const char* pSample, float flVolume, float flAttenuation, int nSeed, int iFlags, int iPitch, const vec3_t* pOrigin, const vec3_t* pDirection, void* pUtlVecOrigins, bool bUpdatePositions, float soundtime, int speakerentity );
 	void                     RenderSmokeOverlay( bool unk );
 	void                     OnRenderStart( );
@@ -140,7 +138,7 @@ public:
 
 	// cvars
 	VMT m_debug_spread;
-	VMT m_net_earlier_temp_ents;
+	VMT net_earliertempents;
 
 	// wndproc old ptr.
 	WNDPROC m_old_wndproc;
@@ -153,9 +151,9 @@ public:
 	BuildTransformations_t      m_BuildTransformations;
 	NotifyOnLayerChangeCycle_t  m_NotifyOnLayerChangeCycle;
 	NotifyOnLayerChangeWeight_t m_NotifyOnLayerChangeWeight;
+	PostNetworkDataReceived_t   m_PostNetworkDataReceived;
 	GetEyeAngles_t m_GetEyeAngles;
 	AccumulateLayers_t m_AccumulateLayers;
-	PhysicsSimulate_t m_PhysicsSimulate;
 
 	// netvar proxies.
 	RecvVarProxy_t m_Pitch_original;
@@ -170,7 +168,7 @@ public:
     virtual void OnEntityCreated( Entity *ent );
     virtual void OnEntityDeleted( Entity *ent );
 
-    __forceinline void init( ) {
+    __forceinline void Init( ) {
         g_csgo.AddListenerEntity( this );
     }
 };

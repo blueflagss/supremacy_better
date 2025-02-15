@@ -1,26 +1,24 @@
 #include "includes.h"
 
 LRESULT WINAPI Hooks::WndProc( HWND wnd, uint32_t msg, WPARAM wp, LPARAM lp ) {
-	bool allow_input_processing = false;
+	g_cl.m_allow_input_processing = false;
 
-	if ( g_gui.m_open ) {
-		allow_input_processing = true;
+	if ( g_gui.m_open && g_cl.m_processing ) {
+		g_cl.m_allow_input_processing = true;
 
 		switch ( msg ) {
 		case WM_MOUSEWHEEL: {
 		} break;
 		case WM_KEYDOWN: {
 			if ( LOWORD ( wp ) == VK_SPACE || LOWORD ( wp ) == 0x57 || LOWORD ( wp ) == 0x41 || LOWORD ( wp ) == 0x53 || LOWORD ( wp ) == 0x44 )
-				allow_input_processing = false;
+				g_cl.m_allow_input_processing = false;
 		} break;
 		case WM_KEYUP: {
 			if ( LOWORD ( wp ) == VK_SPACE || LOWORD ( wp ) == 0x57 || LOWORD ( wp ) == 0x41 || LOWORD ( wp ) == 0x53 || LOWORD ( wp ) == 0x44 )
-				allow_input_processing = false;
+				g_cl.m_allow_input_processing = false;
 		} break;
 		}
 	}
-	else
-		allow_input_processing = false;
 
 	switch( msg ) {
 	case WM_LBUTTONDOWN:
@@ -102,7 +100,7 @@ LRESULT WINAPI Hooks::WndProc( HWND wnd, uint32_t msg, WPARAM wp, LPARAM lp ) {
 			break;
 
 		default:
-			if( g_input.m_use_str || std::isdigit( static_cast< char >( wp ) ) )
+			if( std::isdigit( static_cast< char >( wp ) ) )
 				g_input.m_buffer += static_cast< char >( wp );
 
 			break;
@@ -113,9 +111,9 @@ LRESULT WINAPI Hooks::WndProc( HWND wnd, uint32_t msg, WPARAM wp, LPARAM lp ) {
 	default:
 		break;
 	}
-
-	if ( allow_input_processing )
-		return true;
 	
+	if ( g_cl.m_allow_input_processing )
+		return true;
+
 	return g_winapi.CallWindowProcA( g_hooks.m_old_wndproc, wnd, msg, wp, lp );
 }

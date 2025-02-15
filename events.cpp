@@ -36,16 +36,14 @@ void events::round_start( IGameEvent* evt ) {
 		auto buy2 = g_menu.main.misc.buy2.GetActiveItems( );
 		auto buy3 = g_menu.main.misc.buy3.GetActiveItems( );
 
-		if ( !buy1.empty ( ) || !buy2.empty ( ) || !buy3.empty ( ) ) {
-			for ( auto it = buy1.begin ( ); it != buy1.end ( ); ++it )
-				g_csgo.m_engine->ExecuteClientCmd ( tfm::format ( XOR ( "buy %s" ), *it ).data ( ) );
+		for( auto it = buy1.begin( ); it != buy1.end( ); ++it )
+			g_csgo.m_engine->ExecuteClientCmd( tfm::format( XOR( "buy %s" ), *it ).data( ) );
 
-			for ( auto it = buy2.begin ( ); it != buy2.end ( ); ++it )
-				g_csgo.m_engine->ExecuteClientCmd ( tfm::format ( XOR ( "buy %s" ), *it ).data ( ) );
+		for( auto it = buy2.begin( ); it != buy2.end( ); ++it )
+			g_csgo.m_engine->ExecuteClientCmd( tfm::format( XOR( "buy %s" ), *it ).data( ) );
 
-			for ( auto it = buy3.begin ( ); it != buy3.end ( ); ++it )
-				g_csgo.m_engine->ExecuteClientCmd ( tfm::format ( XOR ( "buy %s" ), *it ).data ( ) );
-		}
+		for( auto it = buy3.begin( ); it != buy3.end( ); ++it )
+			g_csgo.m_engine->ExecuteClientCmd( tfm::format( XOR( "buy %s" ), *it ).data( ) );
 	}
 
 	// update all players.
@@ -330,6 +328,10 @@ void events::bomb_abortdefuse( IGameEvent* evt ) {
 	g_notify.add( out );
 }
 
+void events::weapon_fire( IGameEvent* evt ) {
+	//g_shots.OnWeaponFire( evt );
+}
+
 void events::bomb_exploded( IGameEvent* evt ) {
     g_visuals.m_c4_planted = false;
     g_visuals.m_planted_c4 = nullptr;
@@ -340,11 +342,12 @@ void events::bomb_defused( IGameEvent* evt ) {
     g_visuals.m_planted_c4 = nullptr;
 }
 
-void Listener::init( ) {
+void Listener::Init( ) {
 	// link events with callbacks.
 	add( XOR( "round_start" ), events::round_start );
 	add( XOR( "round_end" ), events::round_end );
 	add( XOR( "player_hurt" ), events::player_hurt );
+	add( XOR( "weapon_fire" ), events::weapon_fire );
 	add( XOR( "bullet_impact" ), events::bullet_impact );
 	add( XOR( "item_purchase" ), events::item_purchase );
 	add( XOR( "player_death" ), events::player_death );

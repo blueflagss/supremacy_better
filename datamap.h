@@ -47,30 +47,31 @@ enum {
 
 class typedescription_t {
 public:
-	fieldtype_t				m_type;
-	const char*				m_name;
-	int						m_offset[ TD_OFFSET_COUNT ];
-	unsigned short			m_size;
-	short					m_flags;
-	const char*				m_ext_name;
-	void*					m_save_restore_ops;
-	inputfunc_t				m_input_func;
-	datamap_t*				m_td;
-	int						m_bytes;
-	typedescription_t*		m_override_field;
-	int						m_override_count;
-	float					m_tolerance;
-private:
-	PAD( 0x8 );
+	fieldtype_t field_type;                         // 0x00
+	const char* field_name;                         // 0x04
+	int field_offset;                               // 0x08 Local offset value
+	uint16_t field_size;                            // 0x10
+	int16_t flags;                                  // 0x12
+	const char* external_name;                      // 0x14 The name of the variable in the map/fgd data, or the name of the actionT
+	void* /*i_save_restore_ops */ save_restore_ops;// 0x18 Pointer to the function set for save/restoring of custom data types
+	void* /*inputfunc_t*/ input_func;              // 0x1C For associating function with string names
+	datamap_t* td;                                  // 0x20 For embedding additional datatables inside this one
+	int32_t field_size_in_bytes;                    // 0x24 Stores the actual member variable size in bytes
+	typedescription_t* override_field;              // 0x28 FTYPEDESC_OVERRIDE point to first baseclass instance if chains_validated has occurred
+	int32_t override_count;                         // 0x2C Used to track exclusion of baseclass fields
+	float field_tolerance;                          // 0x30 Tolerance for field errors for float fields
+	int flat_offset[ TD_OFFSET_COUNT ];
+	unsigned short flat_group;
 };
+
+struct optimized_datamap_t;
 
 class datamap_t {
 public:
-	typedescription_t*	m_desc;
-	int					m_size;
-	char const*			m_name;
-	datamap_t*			m_base;
-	bool		        m_chains_validated;
-	bool				m_packed_offsets_computed;
-	int			        m_packed_size;
+	typedescription_t* data_desc;
+	int data_num_fields;
+	char const* data_class_name;
+	datamap_t* base_map;
+	int packed_size;
+	optimized_datamap_t* optimized_datamap;
 };

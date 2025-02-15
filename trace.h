@@ -399,6 +399,7 @@ public:
 class IEngineTrace {
 	enum indices : size_t {
 		GETPOINTCONTENTS = 0,
+		GETPOINTCONTENTSWORLDONLY = 1,
 		CLIPRAYTOENTITY  = 3,
 		TRACERAY         = 5,
 	};
@@ -406,6 +407,10 @@ class IEngineTrace {
 public:
 	__forceinline int GetPointContents( const vec3_t& position, int mask = MASK_ALL, void** entity = nullptr ) {
 		return util::get_method< int( __thiscall* )( decltype( this ), const vec3_t&, int, void** ) >( this, GETPOINTCONTENTS )( this, position, mask, entity );
+	}
+
+	__forceinline int GetPointContentsWorldOnly( const vec3_t& position, int mask = MASK_ALL ) {
+		return util::get_method< int( __thiscall* )( decltype( this ), const vec3_t& ) >( this, GETPOINTCONTENTSWORLDONLY )( this, position );
 	}
 
 	__forceinline void ClipRayToEntity( const Ray& ray, uint32_t mask, Entity* entity, CGameTrace* trace ) {

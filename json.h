@@ -2233,12 +2233,12 @@ namespace nlohmann {
 
 			@since version 1.0.0
 			*/
-			basic_json( std::initializer_list<basic_json> init,
+			basic_json( std::initializer_list<basic_json> Init,
 						bool type_deduction = true,
 						value_t manual_type = value_t::array ) {
 				// check if each element is an array with two elements whose first
 				// element is a string
-				bool is_an_object = std::all_of( init.begin( ), init.end( ),
+				bool is_an_object = std::all_of( Init.begin( ), Init.end( ),
 												 []( const basic_json & element ) {
 					return element.is_array( ) and element.size( ) == 2 and element[ 0 ].is_string( );
 				} );
@@ -2261,14 +2261,14 @@ namespace nlohmann {
 					m_type = value_t::object;
 					m_value = value_t::object;
 
-					std::for_each( init.begin( ), init.end( ), [ this ]( const basic_json & element ) {
+					std::for_each( Init.begin( ), Init.end( ), [ this ]( const basic_json & element ) {
 						m_value.object->emplace( *( element[ 0 ].m_value.string ), element[ 1 ] );
 					} );
 				}
 				else {
 					// the initializer list describes an array -> create array
 					m_type = value_t::array;
-					m_value.array = create<array_t>( init );
+					m_value.array = create<array_t>( Init );
 				}
 
 				assert_invariant( );
@@ -2308,9 +2308,9 @@ namespace nlohmann {
 
 			@since version 1.0.0
 			*/
-			static basic_json array( std::initializer_list<basic_json> init =
+			static basic_json array( std::initializer_list<basic_json> Init =
 									 std::initializer_list<basic_json>( ) ) {
-				return basic_json( init, false, value_t::array );
+				return basic_json( Init, false, value_t::array );
 			}
 
 			/*!
@@ -2348,9 +2348,9 @@ namespace nlohmann {
 
 			@since version 1.0.0
 			*/
-			static basic_json object( std::initializer_list<basic_json> init =
+			static basic_json object( std::initializer_list<basic_json> Init =
 									  std::initializer_list<basic_json>( ) ) {
-				return basic_json( init, false, value_t::object );
+				return basic_json( Init, false, value_t::object );
 			}
 
 			/*!
@@ -5374,13 +5374,13 @@ namespace nlohmann {
 			@liveexample{The example shows how initializer lists are treated as
 			objects when possible.,push_back__initializer_list}
 			*/
-			void push_back( std::initializer_list<basic_json> init ) {
-				if( is_object( ) and init.size( ) == 2 and init.begin( )->is_string( ) ) {
-					const string_t key = *init.begin( );
-					push_back( typename object_t::value_type( key, *( init.begin( ) + 1 ) ) );
+			void push_back( std::initializer_list<basic_json> Init ) {
+				if( is_object( ) and Init.size( ) == 2 and Init.begin( )->is_string( ) ) {
+					const string_t key = *Init.begin( );
+					push_back( typename object_t::value_type( key, *( Init.begin( ) + 1 ) ) );
 				}
 				else {
-					push_back( basic_json( init ) );
+					push_back( basic_json( Init ) );
 				}
 			}
 
@@ -5388,8 +5388,8 @@ namespace nlohmann {
 			@brief add an object to an object
 			@copydoc push_back(std::initializer_list<basic_json>)
 			*/
-			reference operator+=( std::initializer_list<basic_json> init ) {
-				push_back( init );
+			reference operator+=( std::initializer_list<basic_json> Init ) {
+				push_back( Init );
 				return *this;
 			}
 

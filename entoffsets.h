@@ -11,7 +11,7 @@ public:
         __forceinline XoredNetvar() : m_xored_offset{ 0u } {}
 
         // xor our netvar and add the extra offset for xor.
-        __forceinline void init( const size_t offset ) {
+        __forceinline void Init( const size_t offset ) {
             m_xored_offset = ( offset ^ key ) + xor_extra;
         }
 
@@ -33,8 +33,6 @@ public:
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_vecMaxs;
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_iTeamNum;
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_nSequence;
-	XoredNetvar < GET_XOR_KEYUI32, __COUNTER__ > m_bStrafing;
-	XoredNetvar < GET_XOR_KEYUI32, __COUNTER__ > m_hViewModel;
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_flCycle;
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_flC4Blow;
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_bBombTicking;
@@ -51,13 +49,10 @@ public:
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_iAccount;
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_bHasDefuser;
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_nHitboxSet;
-	XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_flTimeOfLastInjury;
-	XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_LastHitGroup;
-	XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_vecLadderNormal;
-	XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_nRelativeDirectionOfLastInjury;
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_angAbsRotation;
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_angRotation;
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_angNetworkAngles;
+    XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > pl;
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_nTickBase;
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_flNextAttack;
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_flDuckAmount;
@@ -86,7 +81,6 @@ public:
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_pCurrentCommand;
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_iEFlags;
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_flPoseParameter;
-	XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_flEncodedController;
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_hMyWearables;
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_BoneCache;
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_hObserverTarget;
@@ -114,8 +108,6 @@ public:
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_nFallbackSeed;
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_flFallbackWear;
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_iViewModelIndex;
-	XoredNetvar < GET_XOR_KEYUI32, __COUNTER__ > m_bIsWalking;
-	XoredNetvar < GET_XOR_KEYUI32, __COUNTER__ > m_flAnimTime;
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_iWorldModelIndex;
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_iAccountID;
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_iItemIDHigh;
@@ -133,28 +125,26 @@ public:
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_flConstraintRadius;
     XoredNetvar< GET_XOR_KEYUI32, __COUNTER__ > m_hMyWeapons;
 
-    void init( ) {
+    void Init( ) {
         // initialize a xored netvar.
         #define INIT_XOREDNETVAR( member_var, table_hash, prop_hash ) \
-            member_var.init( g_netvars.get( table_hash, prop_hash ) );
+            member_var.Init( g_netvars.get( table_hash, prop_hash ) );
 
         // same as above, but you must manually input the offset.
         // good for if you need something near a netvar.
         #define INIT_XOREDNETVAR_SPECIFIC( member_var, offset ) \
-            member_var.init( offset );
+            member_var.Init( offset );
 
         INIT_XOREDNETVAR( m_vecOrigin,                  HASH( "DT_BasePlayer" ),           HASH( "m_vecOrigin" ) );
         INIT_XOREDNETVAR( m_vecVelocity,                HASH( "DT_CSPlayer" ),             HASH( "m_vecVelocity[0]" ) );
         INIT_XOREDNETVAR( m_vecMins,                    HASH( "DT_BaseEntity" ),           HASH( "m_vecMins" ) );
+        INIT_XOREDNETVAR( pl,                           HASH( "DT_BasePlayer" ), HASH( "pl" ) );
         INIT_XOREDNETVAR( m_vecMaxs,                    HASH( "DT_BaseEntity" ),           HASH( "m_vecMaxs" ) );
         INIT_XOREDNETVAR( m_iTeamNum,                   HASH( "DT_BaseEntity" ),           HASH( "m_iTeamNum" ) );
 		INIT_XOREDNETVAR( m_flVelocityModifier,         HASH( "DT_CSPlayer" ), HASH( "m_flVelocityModifier" ) );
         INIT_XOREDNETVAR( m_nSequence,                  HASH( "DT_PredictedViewModel" ),   HASH( "m_nSequence" ) );
-        INIT_XOREDNETVAR( m_flCycle,                    HASH( "DT_BaseAnimating" ),        HASH( "m_flCycle" ) );
-		INIT_XOREDNETVAR ( m_flAnimTime, HASH ( "DT_BaseEntity" ), HASH ( "m_flAnimTime" ) );
-		INIT_XOREDNETVAR ( m_bStrafing, HASH ( "DT_CSPlayer" ), HASH ( "m_bStrafing" ) );
+        INIT_XOREDNETVAR( m_flCycle,                    HASH( "DT_CSPlayer" ),             HASH( "m_flCycle" ) );
         INIT_XOREDNETVAR( m_flC4Blow,                   HASH( "DT_PlantedC4" ),            HASH( "m_flC4Blow" ) );
-		INIT_XOREDNETVAR ( m_vecLadderNormal, HASH ( "DT_BasePlayer" ), HASH ( "m_vecLadderNormal" ) );
         INIT_XOREDNETVAR( m_bBombTicking,               HASH( "DT_PlantedC4" ),            HASH( "m_bBombTicking" ) );
         INIT_XOREDNETVAR( m_nModelIndex,                HASH( "DT_BasePlayer" ),           HASH( "m_nModelIndex" ) );
         INIT_XOREDNETVAR( m_lifeState,                  HASH( "DT_BasePlayer" ),           HASH( "m_lifeState" ) );
@@ -178,9 +168,6 @@ public:
         INIT_XOREDNETVAR( m_bClientSideAnimation,       HASH( "DT_CSPlayer" ),             HASH( "m_bClientSideAnimation" ) );
         INIT_XOREDNETVAR( m_bHasHeavyArmor,             HASH( "DT_CSPlayer" ),             HASH( "m_bHasHeavyArmor" ) );
         INIT_XOREDNETVAR( m_bIsScoped,                  HASH( "DT_CSPlayer" ),             HASH( "m_bIsScoped" ) );
-		INIT_XOREDNETVAR ( m_hViewModel, HASH ( "DT_CSPlayer" ), HASH ( "m_hViewModel[0]" ) );
-		// bIsWalking
-		INIT_XOREDNETVAR ( m_bIsWalking, HASH ( "DT_CSPlayer" ), HASH ( "m_bIsWalking" ) );
         INIT_XOREDNETVAR( m_bDucking,                   HASH( "DT_CSPlayer" ),             HASH( "m_bDucking" ) );
         INIT_XOREDNETVAR( m_bSpotted,                   HASH( "DT_BaseEntity" ),           HASH( "m_bSpotted" ) );
         INIT_XOREDNETVAR( m_iObserverMode,              HASH( "DT_BasePlayer" ),           HASH( "m_iObserverMode" ) );
@@ -193,11 +180,7 @@ public:
         INIT_XOREDNETVAR( m_aimPunchAngleVel,           HASH( "DT_CSPlayer" ),             HASH( "m_aimPunchAngleVel" ) );
         INIT_XOREDNETVAR( m_vecViewOffset,              HASH( "DT_CSPlayer" ),             HASH( "m_vecViewOffset[0]" ) );
         INIT_XOREDNETVAR( m_flPoseParameter,            HASH( "DT_CSPlayer" ),             HASH( "m_flPoseParameter" ) );
-		INIT_XOREDNETVAR ( m_flEncodedController, HASH ( "DT_CSPlayer" ), HASH ( "m_flEncodedController" ) );
         INIT_XOREDNETVAR( m_hMyWearables,               HASH( "DT_BaseCombatCharacter" ),  HASH( "m_hMyWearables" ) );
-		INIT_XOREDNETVAR ( m_nRelativeDirectionOfLastInjury, HASH ( "DT_BaseCombatCharacter" ), HASH ( "m_nRelativeDirectionOfLastInjury" ) );
-		INIT_XOREDNETVAR ( m_flTimeOfLastInjury, HASH ( "DT_BaseCombatCharacter" ), HASH ( "m_flTimeOfLastInjury" ) );
-		INIT_XOREDNETVAR ( m_LastHitGroup, HASH ( "DT_BaseCombatCharacter" ), HASH ( "m_LastHitGroup" ) );
         INIT_XOREDNETVAR( m_hObserverTarget,            HASH( "DT_CSPlayer" ),             HASH( "m_hObserverTarget" ) );
         INIT_XOREDNETVAR( m_hActiveWeapon,              HASH( "DT_BaseCombatCharacter" ),  HASH( "m_hActiveWeapon" ) );
         INIT_XOREDNETVAR( m_hGroundEntity,              HASH( "DT_CSPlayer" ),             HASH( "m_hGroundEntity" ) );

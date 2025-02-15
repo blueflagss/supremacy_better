@@ -4,6 +4,8 @@ class AimbotTab : public Tab {
 public:
 	// col1.
 	Checkbox	  enable;
+	Checkbox	  delay_shot;
+	Checkbox	  disable_vis_interp;
 	Checkbox	  silent;
 	Dropdown	  selection;
 	Checkbox	  correct_override;
@@ -21,9 +23,11 @@ public:
 	Slider		  penetrate_minimal_damage;
 	Checkbox	  penetrate_minimal_damage_hp;
 	Checkbox      knifebot;
+	Checkbox	  override_min_dmg;
+	Keybind		  override_min_dmg_key;
+	Slider	      override_dmg;
 	Checkbox	  zeusbot;
-	Checkbox      show_capsules;
-	
+
 	// col2.
 	Dropdown      zoom;
 	Checkbox      nospread;
@@ -38,7 +42,7 @@ public:
 	Keybind       baim_key;
 
 public:
-	void init( ) {
+	void Init( ) {
 		// title.
 		SetTitle( XOR( "aimbot" ) );
 
@@ -47,6 +51,12 @@ public:
 
 		silent.setup( XOR( "silent aimbot" ), XOR( "silent" ) );
 		RegisterElement( &silent );
+
+		delay_shot.setup( XOR( "delay shot" ), XOR( "delay_shot" ) );
+		RegisterElement( &delay_shot );
+
+		disable_vis_interp.setup( XOR( "disable visual interpolation" ), XOR( "no_vis_interp" ) );
+		RegisterElement( &disable_vis_interp );
 
 		selection.setup( XOR( "target selection" ), XOR( "selection" ), { XOR( "distance" ), XOR( "crosshair" ), XOR( "damage" ), XOR( "health" ), XOR( "lag" ), XOR( "height" ) } );
 		RegisterElement( &selection );
@@ -57,9 +67,6 @@ public:
 		fov_amount.setup( "", XOR( "fov_amount" ), 1.f, 180.f, false, 0, 180.f, 1.f, XOR( L"°" ) );
 		fov_amount.AddShowCallback( callbacks::IsFovOn );
 		RegisterElement( &fov_amount );
-
-		show_capsules.setup ( "show capsules", XOR ( "show_capsules" ) );
-		RegisterElement ( &show_capsules );
 
 		hitbox.setup( XOR( "hitbox" ), XOR( "hitbox" ), { XOR( "head" ), XOR( "chest" ), XOR( "body" ), XOR( "arms" ), XOR( "legs" ) } );
 		RegisterElement( &hitbox );
@@ -91,6 +98,15 @@ public:
 		penetrate_minimal_damage.AddShowCallback( callbacks::IsPenetrationOn );
 		RegisterElement( &penetrate_minimal_damage );
 
+		override_min_dmg.setup( XOR( "override minimal damage" ), XOR( "override_min_dmg" ) );
+		RegisterElement( &override_min_dmg );
+
+		override_min_dmg_key.setup( "", XOR( "override_min_dmg_key" ) );
+		RegisterElement( &override_min_dmg_key );
+
+		override_dmg.setup( "", XOR( "override_dmg_amount" ), 1.f, 100.f, false, 0, 30.f, 1.f );
+		RegisterElement( &override_dmg );
+
 		penetrate_minimal_damage_hp.setup( XOR( "scale penetration damage on hp" ), XOR( "penetrate_minimal_damage_hp" ) );
 		penetrate_minimal_damage_hp.AddShowCallback( callbacks::IsPenetrationOn );
 		RegisterElement( &penetrate_minimal_damage_hp );
@@ -121,8 +137,8 @@ public:
 		hitchance_amount.AddShowCallback( callbacks::IsHitchanceOn );
 		RegisterElement( &hitchance_amount, 1 );
 
-		//lagfix.setup( XOR( "predict fake-lag" ), XOR( "lagfix" ) );
-		//RegisterElement( &lagfix, 1 );
+		lagfix.setup( XOR( "predict fake-lag" ), XOR( "lagfix" ) );
+		RegisterElement( &lagfix, 1 );
 
 		correct.setup( XOR( "correct anti-aim" ), XOR( "correct" ) );
 		RegisterElement( &correct, 1 );
@@ -151,10 +167,6 @@ public:
 	Checkbox enable;
 	Checkbox edge;
 	Dropdown mode;
-	Checkbox      manual_aa;
-	Keybind 	  manual_aa_left;
-	Keybind 	  manual_aa_right;
-	Keybind 	  manual_aa_back;
 
 	Dropdown pitch_stand;
 	Dropdown yaw_stand;
@@ -203,8 +215,14 @@ public:
 	Dropdown      lag_mode;
 	Slider        lag_limit;
 	Checkbox      lag_land;
+	Checkbox      manual_aa;
+	Checkbox      manual_aa_indicators;
+	Colorpicker   manual_aa_indicators_color;
+	Keybind 	  manual_aa_left;
+	Keybind 	  manual_aa_right;
+	Keybind 	  manual_aa_back;
 public:
-	void init( ) {
+	void Init( ) {
 		SetTitle( XOR( "anti-aim" ) );
 
 		enable.setup( XOR( "enable" ), XOR( "enable" ) );
@@ -215,11 +233,6 @@ public:
 
 		mode.setup( "", XOR( "mode" ), { XOR( "stand" ), XOR( "walk" ), XOR( "air" ) }, false );
 		RegisterElement( &mode );
-
-		//Checkbox      manual_aa;
-		//Keybind 	  manual_aa_left;
-		//Keybind 	  manual_aa_right;
-		//Keybind 	  manual_aa_back;
 
 		// stand.
 		pitch_stand.setup( XOR( "pitch" ), XOR( "pitch_stnd" ), { XOR( "off" ), XOR( "down" ), XOR( "up" ), XOR( "random" ), XOR( "ideal" ) } );
@@ -389,21 +402,6 @@ public:
 		body_fake_air.AddShowCallback( callbacks::AirHasYaw );
 		RegisterElement( &body_fake_air );
 
-		manual_aa.setup ( XOR ( "manual anti-aim" ), XOR ( "manual_aa" ) );
-		RegisterElement ( &manual_aa );
-
-		manual_aa_left.setup ( XOR ( "left" ), XOR ( "manual_left" ) );
-		RegisterElement ( &manual_aa_left );
-		manual_aa_left.SetToggleCallback ( callbacks::ManualLeft );
-
-		manual_aa_right.setup ( XOR ( "right" ), XOR ( "manual_right" ) );
-		RegisterElement ( &manual_aa_right );
-		manual_aa_right.SetToggleCallback ( callbacks::ManualRight );
-
-		manual_aa_back.setup ( XOR ( "back" ), XOR ( "manual_back" ) );
-		RegisterElement ( &manual_aa_back );
-		manual_aa_back.SetToggleCallback ( callbacks::ManualBack );
-
 		// col2.
 		leg_movement.setup ( "leg movement", XOR ( "leg_movement" ), { XOR ( "off" ), XOR ( "slide" ), XOR ( "never slide" ) } );
 		RegisterElement ( &leg_movement, 1 );
@@ -434,6 +432,24 @@ public:
 
 		lag_land.setup( XOR( "on land" ), XOR( "lag_land" ) );
 		RegisterElement( &lag_land, 1 );
+
+		manual_aa.setup( XOR( "manual anti-aim" ), XOR( "manual_aa" ) );
+		RegisterElement( &manual_aa );
+
+		manual_aa_left.setup( XOR( "left" ), XOR( "manual_left" ) );
+		RegisterElement( &manual_aa_left );
+
+		manual_aa_right.setup( XOR( "right" ), XOR( "manual_right" ) );
+		RegisterElement( &manual_aa_right );
+
+		manual_aa_back.setup( XOR( "back" ), XOR( "manual_back" ) );
+		RegisterElement( &manual_aa_back );
+
+		manual_aa_indicators.setup( XOR( "manual indicators" ), XOR( "manual_aa_indicators" ) );
+		RegisterElement( &manual_aa_indicators );
+
+		manual_aa_indicators_color.setup( XOR( "manual indicators color" ), XOR( "manual_aa_indicators_color" ), { 255, 255, 255 } );
+		RegisterElement( &manual_aa_indicators_color );
 	}
 };
 
@@ -456,7 +472,6 @@ public:
 	Colorpicker   ammo_color;		
 	Checkbox      lby_update;
 	Colorpicker   lby_update_color;
-	Checkbox show_server_boxes;
 
 	// col2.
 	MultiDropdown skeleton;
@@ -479,13 +494,12 @@ public:
 	Colorpicker   chams_friendly_invis;
 	Slider        chams_friendly_blend;
 	Checkbox      chams_local;
-
 	Colorpicker   chams_local_col;
 	Slider        chams_local_blend;
 	Checkbox      chams_local_scope;
 	Slider        chams_local_scope_opacity;
 public:
-	void init( ) {
+	void Init( ) {
 		SetTitle( XOR( "players" ) );
 
 		box.setup( XOR( "boxes" ), XOR( "box" ), { XOR( "enemy" ), XOR( "friendly" ) } );
@@ -515,7 +529,7 @@ public:
 		health.setup( XOR( "health" ), XOR( "health" ), { XOR( "enemy" ), XOR( "friendly" ) } );
 		RegisterElement( &health );
 
-		flags_enemy.setup( XOR( "flags enemy" ), XOR( "flags_enemy" ), { XOR( "money" ), XOR( "armor" ), XOR( "scoped" ), XOR( "flashed" ), XOR( "reloading" ), XOR( "bomb" ), XOR ( "exploit" ) } );
+		flags_enemy.setup( XOR( "flags enemy" ), XOR( "flags_enemy" ), { XOR( "money" ), XOR( "armor" ), XOR( "scoped" ), XOR( "flashed" ), XOR( "reloading" ), XOR( "bomb" ) } );
 		RegisterElement( &flags_enemy );
 
 		flags_friendly.setup( XOR( "flags friendly" ), XOR( "flags_friendly" ), { XOR( "money" ), XOR( "armor" ), XOR( "scoped" ), XOR( "flashed" ), XOR( "reloading" ), XOR( "bomb" ) } );
@@ -608,12 +622,6 @@ public:
 
 		chams_local_scope_opacity.setup ( XOR ( "scope opacity" ), XOR ( "chams_local_scope_opacity" ), 0.f, 100.f, false, 0, 100.f, 1.f, XOR ( L"%" ) );
 		RegisterElement ( &chams_local_scope_opacity, 1 );
-
-#ifdef _DEBUG
-		show_server_boxes.setup ( XOR ( "show server boxes" ), XOR ( "show_server_boxes" ), 1 );
-		RegisterElement ( &show_server_boxes );
-#endif	
-
 	}
 };
 
@@ -659,10 +667,8 @@ public:
 	Keybind       thirdperson;
 	Slider        thirdperson_distance;
 	Checkbox      thirdperson_transition;
-	Checkbox      override_aspect_ratio;
-	Slider        aspect_ratio_value;
 public:
-	void init( ) {
+	void Init( ) {
 		SetTitle( XOR( "visuals" ) );
 
 		items.setup( XOR( "dropped weapons" ), XOR( "items" ) );
@@ -697,7 +703,7 @@ public:
 		RegisterElement( &world );
 
 		transparent_props.setup( XOR( "transparent props" ), XOR( "transparent_props" ) );
-		//transparent_props.SetCallback( Visuals::ModulateWorld );
+		transparent_props.SetCallback( Visuals::ModulateWorld );
 		RegisterElement( &transparent_props );
 
 		transparent_props_opacity.setup ( XOR ( "transparent props opacity" ), XOR ( "transparent_props_opacity" ), 0.f, 100.f, false, 0, 100.f, 1.f, XOR ( L"%" ) );
@@ -777,14 +783,8 @@ public:
 		thirdperson.SetToggleCallback( callbacks::ToggleThirdPerson );
 		RegisterElement( &thirdperson, 1 );
 
-		thirdperson_distance.setup ( "thirdperson distance", XOR ( "thirdperson_dist" ), 50.f, 160.f, false, 0, 150.f, 1.f, XOR ( L"°" ) );
+		thirdperson_distance.setup ( "thirdperson distance", XOR ( "thirdperson_dist" ), 50.f, 160.f, true, 0, 150.f, 1.f, XOR ( L"°" ) );
 		RegisterElement ( &thirdperson_distance, 1 );
-
-		override_aspect_ratio.setup ( XOR ( "override aspect ratio" ), XOR ( "override_aspect_ratio" ) );
-		RegisterElement ( &override_aspect_ratio, 1 );
-
-		aspect_ratio_value.setup ( "thirdperson distance", XOR ( "aspect_ratio_value" ), 0.f, 2.f, false, 0.f, 2.f, .1f, XOR ( L"%" ) );
-		RegisterElement ( &aspect_ratio_value, 1 );
 
 		//thirdperson_transition.setup ( XOR ( "thirdperson transition" ), XOR ( "thirdperson_transition" ) );
 		//RegisterElement ( &thirdperson_transition, 1 );
@@ -795,6 +795,7 @@ class MovementTab : public Tab {
 public:
 	Checkbox bhop;
 	Checkbox airduck;
+	Checkbox faststop;
 	Checkbox autostrafe;
 	Dropdown strafe_type;
 	Keybind  cstrafe;
@@ -805,12 +806,11 @@ public:
 
 	Keybind  fakewalk;
 	Keybind  autopeek;
-	Checkbox  autostop;
-	Checkbox  faststop;
+	Keybind  autostop;
 	Checkbox autostop_always_on;
 
 public:
-	void init( ) {
+	void Init( ) {
 		SetTitle( XOR( "movement" ) );
 
 		bhop.setup( XOR( "automatic jump" ), XOR( "bhop" ) );
@@ -825,20 +825,20 @@ public:
 		strafe_type.setup ( XOR ( "strafe type" ), XOR ( "strafetype" ), { XOR ( "view" ), XOR ( "directional" ) } );
 		RegisterElement ( &strafe_type );
 
-		//cstrafe.setup( XOR( "c-strafe" ), XOR( "cstrafe" ) );
-		//RegisterElement( &cstrafe );
+		cstrafe.setup( XOR( "c-strafe" ), XOR( "cstrafe" ) );
+		RegisterElement( &cstrafe );
 
-		//astrafe.setup( XOR( "a-strafe" ), XOR( "astrafe" ) );
-		//RegisterElement( &astrafe );
+		astrafe.setup( XOR( "a-strafe" ), XOR( "astrafe" ) );
+		RegisterElement( &astrafe );
 
-		//zstrafe.setup( XOR( "z-strafe" ), XOR( "zstrafe" ) );
-		//RegisterElement( &zstrafe );
+		zstrafe.setup( XOR( "z-strafe" ), XOR( "zstrafe" ) );
+		RegisterElement( &zstrafe );
 
-		//z_freq.setup( "", XOR( "z_freq" ), 1.f, 100.f, false, 0, 50.f, 0.5f, XOR( L"hz" ) );
-		//RegisterElement( &z_freq );
+		z_freq.setup( "", XOR( "z_freq" ), 1.f, 100.f, false, 0, 50.f, 0.5f, XOR( L"hz" ) );
+		RegisterElement( &z_freq );
 
-		//z_dist.setup( "", XOR( "z_dist" ), 1.f, 100.f, false, 0, 20.f, 0.5f, XOR( L"%" ) );
-		//RegisterElement( &z_dist );
+		z_dist.setup( "", XOR( "z_dist" ), 1.f, 100.f, false, 0, 20.f, 0.5f, XOR( L"%" ) );
+		RegisterElement( &z_dist );
 
 		fakewalk.setup( XOR( "fake-walk" ), XOR( "fakewalk" ) );
 		RegisterElement( &fakewalk, 1 );
@@ -846,15 +846,17 @@ public:
 		autopeek.setup( XOR( "automatic peek" ), XOR( "autopeek" ) );
 		RegisterElement( &autopeek, 1 );
 
+		autostop_always_on.setup( XOR( "automatic stop always on" ), XOR( "auto_stop_always" ) );
+		RegisterElement( &autostop_always_on, 1 );
+
 		autostop.setup( XOR( "automatic stop" ), XOR( "autostop" ) );
+		autostop.AddShowCallback( callbacks::AUTO_STOP );
 		RegisterElement( &autostop, 1 );
 
-		faststop.setup(XOR("fast stop"), XOR("faststop"));
-		RegisterElement(&faststop, 1);
 
-		//autostop.setup( XOR( "automatic stop" ), XOR( "autostop" ) );
-		//autostop.AddShowCallback( callbacks::AUTO_STOP );
-		//RegisterElement( &autostop, 1 );
+		faststop.setup( XOR( "fast stop" ), XOR( "faststop" ) );
+		RegisterElement( &faststop, 1 );
+
 	}
 };
 
@@ -1083,7 +1085,7 @@ public:
 	Edit	 glove_id;
 
 public:
-	void init( ) {
+	void Init( ) {
 		SetTitle( XOR( "skins" ) );
 
 		enable.setup( XOR( "enable" ), XOR( "skins_enable" ) );
@@ -1981,15 +1983,12 @@ public:
 	Checkbox autoaccept;
 	Checkbox unlock;
 	Checkbox hitmarker;
-	Dropdown hitmarker_sound;
-	Slider		  hitsound_vol;
-	Edit     hitsound_name;
 	Checkbox ragdoll_force;
 	Checkbox killfeed;
 	Checkbox ranks;
 
 public:
-	void init( ) {
+	void Init( ) {
 		SetTitle( XOR( "misc" ) );
 
 		buy1.setup( XOR( "auto buy items" ), XOR( "auto_buy1" ),
@@ -2071,12 +2070,6 @@ public:
 		hitmarker.setup( XOR( "hitmarker" ), XOR( "hitmarker" ) );
 		RegisterElement( &hitmarker, 1 );
 
-		hitmarker_sound.setup ( XOR ( "hitsound" ), XOR ( "hitsound" ), { XOR ( "off" ), XOR ( "arena switch press" ), XOR ( "primordial" ), XOR ( "bell" ), XOR ( "cod" ) } );
-		RegisterElement ( &hitmarker_sound, 1 );
-
-		//hitsound_name.setup ( XOR ( "sound name" ), XOR ( "hitsound_name" ), 32, true );
-		//RegisterElement ( &hitsound_name, 1 );
-
 		ragdoll_force.setup( XOR( "ragdoll force" ), XOR( "ragdoll_force" ) );
 		RegisterElement( &ragdoll_force, 1 );
 
@@ -2106,7 +2099,7 @@ public:
 
 public:
 
-	void init( ) {
+	void Init( ) {
 		SetTitle( XOR( "config" ) );
 
 		menu_color.setup( XOR( "menu color" ), XOR( "menu_color" ), colors::burgundy, &g_gui.m_color );
@@ -2188,36 +2181,36 @@ public:
 	ConfigTab	 config;
 
 public:
-	void init( ) {
+	void Init( ) {
 		SetPosition( 50, 50 );
 		SetSize( 630, 600 );
 
 		// aim.
 		RegisterTab( &aimbot );
-		aimbot.init( );
+		aimbot.Init( );
 
 		RegisterTab( &antiaim );
-		antiaim.init( );
+		antiaim.Init( );
 
 		// visuals.
 		RegisterTab( &players );
-		players.init( );
+		players.Init( );
 
 		RegisterTab( &visuals );
-		visuals.init( );
+		visuals.Init( );
 
 		// misc.
 		RegisterTab( &movement );
-		movement.init( );
+		movement.Init( );
 
 		RegisterTab( &skins );
-		skins.init( );
+		skins.Init( );
 
 		RegisterTab( &misc );
-		misc.init( );
+		misc.Init( );
 
 		RegisterTab( &config );
-		config.init( );
+		config.Init( );
 	}
 };
 
@@ -2226,10 +2219,10 @@ public:
 	MainForm main;
 
 public:
-	void init( ) {
-		Colorpicker::init( );
+	void Init( ) {
+		Colorpicker::Init( );
 
-		main.init( );
+		main.Init( );
 		g_gui.RegisterForm( &main, VK_INSERT );
 	}
 };

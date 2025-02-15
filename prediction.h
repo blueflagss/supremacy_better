@@ -54,6 +54,7 @@ public:
 	// indexes for virtuals and hooks.
 	enum indices : size_t {
 		UPDATE                  = 3,
+		PREENTITYPACKETRECEIVED = 4,
         POSTNETWORKDATARECEIVED = 6,
 		SETLOCALVIEWANGLES      = 13,
 		INPREDICTION            = 14,

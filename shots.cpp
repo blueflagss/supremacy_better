@@ -2,8 +2,7 @@
 
 Shots g_shots{ };
 
-void Shots::OnShotFire( Player *target, float damage, int bullets, LagRecord *record ) {
-	//static auto sv_showlagcompensation_duration = g_csgo.m_cvar->FindVar ( HASH ( "sv_showlagcompensation_duration" ) );
+void Shots::OnShotFire( Player* target, float damage, int bullets, LagRecord* record ) {
 
 	// iterate all bullets in this shot.
 	for ( int i{ }; i < bullets; ++i ) {
@@ -20,7 +19,7 @@ void Shots::OnShotFire( Player *target, float damage, int bullets, LagRecord *re
 		// and this is the first bullet, only do this once.
 		if ( target && i == 0 ) {
 			// increment total shots on this player.
-			AimPlayer *data = &g_aimbot.m_players[ target->index( ) - 1 ];
+			AimPlayer* data = &g_aimbot.m_players[ target->index( ) - 1 ];
 			if ( data )
 				++data->m_shots;
 		}
@@ -34,7 +33,7 @@ void Shots::OnShotFire( Player *target, float damage, int bullets, LagRecord *re
 		m_shots.pop_back( );
 }
 
-void Shots::OnImpact( IGameEvent *evt ) {
+void Shots::OnImpact( IGameEvent* evt ) {
 	int        attacker;
 	vec3_t     pos, dir, start, end;
 	float      time;
@@ -68,13 +67,13 @@ void Shots::OnImpact( IGameEvent *evt ) {
 	if ( m_shots.empty( ) )
 		return;
 
-	struct ShotMatch_t { float delta; ShotRecord *shot; };
+	struct ShotMatch_t { float delta; ShotRecord* shot; };
 	ShotMatch_t match;
 	match.delta = std::numeric_limits< float >::max( );
 	match.shot = nullptr;
 
 	// iterate all shots.
-	for ( auto &s : m_shots ) {
+	for ( auto& s : m_shots ) {
 
 		// this shot was already matched
 		// with a 'bullet_impact' event.
@@ -101,7 +100,7 @@ void Shots::OnImpact( IGameEvent *evt ) {
 	}
 
 	// no valid shotrecord was found.
-	ShotRecord *shot = match.shot;
+	ShotRecord* shot = match.shot;
 	if ( !shot )
 		return;
 
@@ -128,7 +127,7 @@ void Shots::OnImpact( IGameEvent *evt ) {
 		return;
 
 	// not in nospread mode, see if the shot missed due to spread.
-	Player *target = shot->m_target;
+	Player* target = shot->m_target;
 	if ( !target )
 		return;
 
@@ -136,12 +135,12 @@ void Shots::OnImpact( IGameEvent *evt ) {
 	if ( !target->alive( ) )
 		return;
 
-	AimPlayer *data = &g_aimbot.m_players[ target->index( ) - 1 ];
+	AimPlayer* data = &g_aimbot.m_players[ target->index( ) - 1 ];
 	if ( !data )
 		return;
 
 	// this record was deleted already.
-	if ( !shot->m_record->m_bones )
+	if ( !shot->m_record->m_bones.data( ) )
 		return;
 
 	// we are going to alter this player.
@@ -171,7 +170,7 @@ void Shots::OnImpact( IGameEvent *evt ) {
 
 	// we did not hit jackshit, or someone else.
 	if ( !trace.m_entity || !trace.m_entity->IsPlayer( ) || trace.m_entity != target )
-		g_notify.add( XOR( "Missed shot due to spread.\n" ) );
+		g_notify.add( XOR( "shot missed due to spread\n" ) );
 
 	// we should have 100% hit this player..
 	// this is a miss due to wrong angles.
@@ -196,7 +195,7 @@ void Shots::OnImpact( IGameEvent *evt ) {
 	backup.restore( target );
 }
 
-void Shots::OnHurt( IGameEvent *evt ) {
+void Shots::OnHurt( IGameEvent* evt ) {
 	int         attacker, victim, group, hp;
 	float       damage;
 	std::string name;
@@ -225,7 +224,7 @@ void Shots::OnHurt( IGameEvent *evt ) {
 		return;
 
 	// get the player that was hurt.
-	Player *target = g_csgo.m_entlist->GetClientEntity< Player * >( victim );
+	Player* target = g_csgo.m_entlist->GetClientEntity< Player* >( victim );
 	if ( !target )
 		return;
 
@@ -245,35 +244,16 @@ void Shots::OnHurt( IGameEvent *evt ) {
 
 	// hitmarker.
 	if ( g_menu.main.misc.hitmarker.get( ) ) {
-		g_visuals.m_hit_duration = 0.5f;
+		g_visuals.m_hit_duration = 1.f;
 		g_visuals.m_hit_start = g_csgo.m_globals->m_curtime;
 		g_visuals.m_hit_end = g_visuals.m_hit_start + g_visuals.m_hit_duration;
 
-		unsigned char mem [ 50000 ];
-
-		// 		hitmarker_sound.setup ( XOR ( "hitsound" ), XOR ( "hitsound" ), { XOR ( "off" ), XOR ( "arena switch press" ), XOR ( "primordial" ), XOR ( "bell" ), XOR ( "cod" ), XOR ( "custom" ) } );
-		switch ( g_menu.main.misc.hitmarker_sound.get ( ) ) {
-			case 1: {
-				g_csgo.m_sound->EmitAmbientSound ( XOR ( "buttons/arena_switch_press_02.wav" ), 1.f );
-			} break;
-			case 2: {
-				PlaySound ( ( LPCSTR ) prim_hitmarker_data, NULL, SND_MEMORY | SND_ASYNC );
-			} break;
-			case 3: {
-				PlaySound ( ( LPCSTR ) bell_hitmarker_data, NULL, SND_MEMORY | SND_ASYNC );
-			} break;
-			case 4: {
-				PlaySound ( ( LPCSTR ) cod_hitmarker_data, NULL, SND_MEMORY | SND_ASYNC );
-			} break;
-			case 5: {
-				g_csgo.m_sound->EmitAmbientSound ( g_menu.main.misc.hitsound_name.get_text ( ).c_str ( ), 1.f );
-			} break;
-		}
+		g_csgo.m_sound->EmitAmbientSound( XOR( "buttons/arena_switch_press_02.wav" ), 1.f );
 	}
 
 	// print this shit.
 	if ( g_menu.main.misc.notifications.get( 1 ) ) {
-		std::string out = tfm::format( XOR( "Hit %s in the %s for %i (%i health remaining)\n" ), name, m_groups[ group ], ( int )damage, hp );
+		std::string out = tfm::format( XOR( "hit %s in the %s for %i (%i remaining)\n" ), name, m_groups[ group ], ( int )damage, hp );
 		g_notify.add( out );
 	}
 
@@ -282,7 +262,7 @@ void Shots::OnHurt( IGameEvent *evt ) {
 
 	// if we hit a player, mark vis impacts.
 	if ( !m_vis_impacts.empty( ) ) {
-		for ( auto &i : m_vis_impacts ) {
+		for ( auto& i : m_vis_impacts ) {
 			if ( i.m_tickbase == g_cl.m_local->m_nTickBase( ) )
 				i.m_hit_player = true;
 		}
@@ -292,10 +272,10 @@ void Shots::OnHurt( IGameEvent *evt ) {
 	if ( m_impacts.empty( ) )
 		return;
 
-	ImpactRecord *impact{ nullptr };
+	ImpactRecord* impact{ nullptr };
 
 	// iterate stored impacts.
-	for ( auto &i : m_impacts ) {
+	for ( auto& i : m_impacts ) {
 
 		// this impact doesnt match with our current hit.
 		if ( i.m_tick != g_cl.m_local->m_nTickBase( ) )
@@ -320,23 +300,14 @@ void Shots::OnHurt( IGameEvent *evt ) {
 	hit.m_group = group;
 	hit.m_damage = damage;
 
-	auto shot_record = impact->m_shot->m_record;
-
-	if ( shot_record ) {
-		player_info_t info;
-
-		if ( g_csgo.m_engine->GetPlayerInfo ( shot_record->m_player->index ( ), &info ) ) {
-			auto format = tfm::format ( XOR ( "shot player: %s | hitgroup: %s | tick : %d | dmg : %f | lc : %s | lag: %d\n" ), info.m_name, m_groups [ hit.m_group ], shot_record->m_tick, damage, shot_record->m_broke_lc, shot_record->m_lag );
-			g_cl.print_debug ( format );
-		}
-	}
+	//g_cl.print( "hit %x time: %f lat: %f dmg: %f\n", impact->m_shot->m_record, impact->m_shot->m_time, impact->m_shot->m_lat, impact->m_shot->m_damage );
 
 	m_hits.push_front( hit );
 
 	while ( m_hits.size( ) > 128 )
 		m_hits.pop_back( );
 
-	AimPlayer *data = &g_aimbot.m_players[ target->index( ) - 1 ];
+	AimPlayer* data = &g_aimbot.m_players[ target->index( ) - 1 ];
 	if ( !data )
 		return;
 
@@ -359,7 +330,7 @@ void Shots::OnHurt( IGameEvent *evt ) {
 	// if we hit head
 	// shoot at this 5 more times.
 	if ( group == HITGROUP_HEAD ) {
-		LagRecord *record = hit.m_impact->m_shot->m_record;
+		LagRecord* record = hit.m_impact->m_shot->m_record;
 
 		//switch( record->m_mode ) {
 		//case Resolver::Modes::RESOLVE_STAND:

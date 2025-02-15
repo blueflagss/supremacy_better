@@ -11,15 +11,14 @@ namespace render {
 	Font indicator;;
 }
 
-void render::init( ) {
-	menu       = Font( XOR( "Tahoma" ), 12, FW_NORMAL, FONTFLAG_NONE );
+void render::Init( ) {
+	menu = Font( XOR( "Tahoma" ), 12, FW_NORMAL, FONTFLAG_NONE );
 	menu_shade = Font( XOR( "Tahoma" ), 12, FW_NORMAL, FONTFLAG_DROPSHADOW );
-	events	   = Font( XOR( "Lucida Console" ), 10, FW_DONTCARE, FONTFLAG_DROPSHADOW );
-	esp        = Font( XOR( "Verdana" ), 12, FW_NORMAL, FONTFLAG_ANTIALIAS | FONTFLAG_DROPSHADOW );
-	esp_small  = Font( XOR( "Small Fonts" ), 8, FW_NORMAL, FONTFLAG_OUTLINE );
-	hud        = Font( XOR( "Tahoma" ), 16, FW_NORMAL, FONTFLAG_ANTIALIAS );
-	cs         = Font( XOR( "Counter-Strike" ), 28, FW_MEDIUM, FONTFLAG_ANTIALIAS | FONTFLAG_DROPSHADOW );
-	indicator  = Font( XOR( "Verdana" ), 26, FW_BOLD, FONTFLAG_ANTIALIAS | FONTFLAG_DROPSHADOW );
+	esp = Font( XOR( "Verdana" ), 12, FW_BOLD, FONTFLAG_DROPSHADOW );
+	esp_small = Font( XOR( "Small Fonts" ), 8, FW_NORMAL, FONTFLAG_OUTLINE );
+	hud = Font( XOR( "Tahoma" ), 16, FW_NORMAL, FONTFLAG_ANTIALIAS );
+	cs = Font( XOR( "Counter-Strike" ), 28, FW_MEDIUM, FONTFLAG_ANTIALIAS | FONTFLAG_DROPSHADOW );
+	indicator = Font( XOR( "Verdana" ), 26, FW_BOLD, FONTFLAG_ANTIALIAS | FONTFLAG_DROPSHADOW );
 }
 
 bool render::WorldToScreen( const vec3_t& world, vec2_t& screen ) {
@@ -28,9 +27,9 @@ bool render::WorldToScreen( const vec3_t& world, vec2_t& screen ) {
 	const VMatrix& matrix = g_csgo.m_engine->WorldToScreenMatrix( );
 
 	// check if it's in view first.
-    // note - dex; w is below 0 when world position is around -90 / +90 from the player's camera on the y axis.
+	// note - dex; w is below 0 when world position is around -90 / +90 from the player's camera on the y axis.
 	w = matrix[ 3 ][ 0 ] * world.x + matrix[ 3 ][ 1 ] * world.y + matrix[ 3 ][ 2 ] * world.z + matrix[ 3 ][ 3 ];
-	if( w < 0.001f )
+	if ( w < 0.001f )
 		return false;
 
 	// calculate x and y.
@@ -87,7 +86,7 @@ void render::circle( int x, int y, int radius, int segments, Color color ) {
 	std::vector< Vertex > vertices{};
 
 	float step = math::pi_2 / segments;
-	for( float i{ 0.f }; i < math::pi_2; i += step )
+	for ( float i{ 0.f }; i < math::pi_2; i += step )
 		vertices.emplace_back( vec2_t{ x + ( radius * std::cos( i ) ), y + ( radius * std::sin( i ) ) } );
 
 	g_csgo.m_surface->DrawTexturedPolygon( vertices.size( ), vertices.data( ) );
@@ -106,11 +105,11 @@ void render::sphere( vec3_t origin, float radius, float angle, float scale, Colo
 	// compute angle step for input radius and precision.
 	float step = ( 1.f / radius ) + math::deg_to_rad( angle );
 
-	for( float lat{}; lat < ( math::pi * scale ); lat += step ) {
+	for ( float lat{}; lat < ( math::pi * scale ); lat += step ) {
 		// reset.
 		vertices.clear( );
 
-		for( float lon{}; lon < math::pi_2; lon += step ) {
+		for ( float lon{}; lon < math::pi_2; lon += step ) {
 			vec3_t point{
 				origin.x + ( radius * std::sin( lat ) * std::cos( lon ) ),
 				origin.y + ( radius * std::sin( lat ) * std::sin( lon ) ),
@@ -118,11 +117,11 @@ void render::sphere( vec3_t origin, float radius, float angle, float scale, Colo
 			};
 
 			vec2_t screen;
-			if( WorldToScreen( point, screen ) )
+			if ( WorldToScreen( point, screen ) )
 				vertices.emplace_back( screen );
 		}
 
-		if( vertices.empty( ) )
+		if ( vertices.empty( ) )
 			continue;
 
 		g_csgo.m_surface->DrawSetColor( color );
@@ -130,19 +129,19 @@ void render::sphere( vec3_t origin, float radius, float angle, float scale, Colo
 	}
 }
 
-Vertex render::RotateVertex( const vec2_t& p, const Vertex& v, float angle ) {
-	// convert theta angle to sine and cosine representations.
-	float c = std::cos( math::deg_to_rad( angle ) );
-	float s = std::sin( math::deg_to_rad( angle ) );
-
-	return {
-        p.x + ( v.m_pos.x - p.x ) * c - ( v.m_pos.y - p.y ) * s, 
-        p.y + ( v.m_pos.x - p.x ) * s + ( v.m_pos.y - p.y ) * c 
-    };
+void render::Font::string( int x, int y, Color color, const std::string& text, StringFlags_t flags /*= render::ALIGN_LEFT */ ) {
+	wstring( x, y, color, util::MultiByteToWide( text ), flags );
 }
 
-void render::Font::string( int x, int y, Color color, const std::string& text,StringFlags_t flags /*= render::ALIGN_LEFT */ ) {
-	wstring( x, y, color, util::MultiByteToWide( text ), flags );
+Vertex render::RotateVertex( vec2_t center, const Vertex& point, float rotation ) {
+	// convert theta angle to sine and cosine representations.
+	float c = std::cos( math::deg_to_rad( rotation ) );
+	float s = std::sin( math::deg_to_rad( rotation ) );
+
+	return {
+		center.x + ( point.m_pos.x - center.x ) * c - ( point.m_pos.y - center.y ) * s,
+		center.y + ( point.m_pos.x - center.x ) * s + ( point.m_pos.y - center.y ) * c
+	};
 }
 
 void render::Font::string( int x, int y, Color color, const std::stringstream& text, StringFlags_t flags /*= render::ALIGN_LEFT */ ) {
@@ -156,9 +155,9 @@ void render::Font::wstring( int x, int y, Color color, const std::wstring& text,
 	g_csgo.m_surface->DrawSetTextFont( m_handle );
 	g_csgo.m_surface->DrawSetTextColor( color );
 
-	if( flags & ALIGN_RIGHT )
+	if ( flags & ALIGN_RIGHT )
 		x -= w;
-	if( flags & render::ALIGN_CENTER )
+	if ( flags & render::ALIGN_CENTER )
 		x -= w / 2;
 
 	g_csgo.m_surface->DrawSetTextPos( x, y );

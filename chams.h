@@ -18,7 +18,7 @@ public:
 	void SetAlpha( float alpha, IMaterial* mat = nullptr );
 	void SetupMaterial( IMaterial* mat, Color col, bool z_flag );
 
-	void init( );
+	void Init( );
 
 	bool OverridePlayer( int index );
 	bool GenerateLerpedMatrix( int index, BoneArray* out );

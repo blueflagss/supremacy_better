@@ -2,7 +2,7 @@
 
 Grenades g_grenades{};;
 
-void Grenades::reset( ) {
+void Grenades::post_update( ) {
 	m_start    = vec3_t{};
 	m_move     = vec3_t{};
 	m_velocity = vec3_t{};
@@ -22,7 +22,7 @@ void Grenades::paint( ) {
 		return;
 
 	// we dont want to do this if dead.
-	if( !g_cl.m_local->alive ( ) )
+	if( !g_cl.m_processing )
 		return;
 
 	// aww man...
@@ -118,12 +118,12 @@ void Grenades::think( ) {
 	bool attack, attack2;
 
 	// reset some data.
-	reset( );
+	post_update( );
 
 	if( !g_menu.main.visuals.tracers.get( ) )
 		return;
 
-	if( !g_cl.m_local->alive ( ) )
+	if( !g_cl.m_processing )
 		return;
 
 	// validate nade.

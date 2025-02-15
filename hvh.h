@@ -1,5 +1,12 @@
 #pragma once
 
+enum class manual_direction : int {
+	none = -1,
+	left,
+	right,
+	back
+};
+
 class AdaptiveAngle {
 public:
 	float m_yaw;
@@ -38,20 +45,21 @@ public:
 	float  m_dir_custom;
 	size_t m_base_angle;
 	float  m_auto_time;
-
+	manual_direction manual_dir;
+	bool using_manual_direction;
 	bool   m_step_switch;
 	int    m_random_lag;
 	float  m_next_random_update;
 	float  m_random_angle;
 	float  m_direction;
 	float  m_auto;
-	float  m_aa_side;
 	float  m_auto_dist;
 	float  m_auto_last;
 	float  m_view;
 
 public:
 	void IdealPitch( );
+	void update_manual_direction( );
 	void AntiAimPitch( );
 	void AutoDirection( );
 	void GetAntiAimDirection( );

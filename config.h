@@ -2,7 +2,7 @@
 
 class Config {
 public:
-	void init( );
+	void Init( );
 	void LoadHotkeys( );
 	void SaveHotkeys( );
 	void load( const Form* form, const std::string& name );

@@ -24,7 +24,7 @@ private:
 	vec3_t    m_start, m_velocity, m_move;
 
 public:
-	void   reset( );
+	void   post_update( );
 	void   paint( );
 	void   think( );
 	void   simulate( );

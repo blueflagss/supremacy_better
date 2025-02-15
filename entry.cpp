@@ -1,17 +1,11 @@
 #include "includes.h"
+#include "threading/threading.h"
+#include "threading/shared_mutex.h"
 
 int __stdcall DllMain( HMODULE self, ulong_t reason, void *reserved ) {
     if( reason == DLL_PROCESS_ATTACH ) {
+        CreateThread( nullptr, 0, Client::Init, nullptr, 0, nullptr );
 
-#ifndef KOLO
-        HANDLE thread = CreateThread( nullptr, 0, Client::init, nullptr, 0, nullptr );
-        if( !thread )
-            return 0;
-
-        // CloseHandle( thread );
-#else
-		Client::init( nullptr );
-#endif
         return 1;
     }
 

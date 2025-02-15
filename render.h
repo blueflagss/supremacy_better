@@ -61,7 +61,7 @@ namespace render {
 	extern Font events;
 	extern Font indicator;
 
-	void init( );
+	void Init( );
 	bool WorldToScreen( const vec3_t& world, vec2_t& screen );
 	void line( vec2_t v0, vec2_t v1, Color color );
 	void line( int x0, int y0, int x1, int y1, Color color );
@@ -72,7 +72,7 @@ namespace render {
 	void circle( int x, int y, int radius, int segments, Color color );
 	void gradient( int x, int y, int w, int h, Color color1, Color color2 );
 	void sphere( vec3_t origin, float radius, float angle, float scale, Color color );
-	Vertex RotateVertex( const vec2_t& p, const Vertex& v, float angle );
+	Vertex RotateVertex( vec2_t center, const Vertex& point, float rotation );
 }
 
 // nitro du hurensohn

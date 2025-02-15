@@ -12,7 +12,7 @@ public:
 		m_debug_id = 42;
 	}
 
-	void init( );
+	void Init( );
 
 	__forceinline void add( const std::string& name, game_event_t fn ) {
 		m_events[ name ].push_back( fn );
@@ -55,6 +55,7 @@ namespace events {
     void bomb_beep( IGameEvent* evt );
 	void bomb_begindefuse( IGameEvent* evt );
 	void bomb_abortdefuse( IGameEvent* evt );
+	void weapon_fire( IGameEvent* evt );
     void bomb_defused( IGameEvent* evt );
     void bomb_exploded( IGameEvent* evt );
 }

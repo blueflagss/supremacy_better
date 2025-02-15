@@ -2,7 +2,7 @@
 
 Config g_config{};
 
-void Config::init( ) {
+void Config::Init( ) {
 	// reset.
 	m_init = false;
 

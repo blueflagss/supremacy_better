@@ -4,7 +4,7 @@
 int Colorpicker::texture = 0;;
 std::unique_ptr< Color[] > Colorpicker::gradient = nullptr;;
 
-void Colorpicker::init( ) {
+void Colorpicker::Init( ) {
 	const int w{ COLORPICKER_PICKER_SIZE };
 	const int h{ COLORPICKER_PICKER_SIZE };
 

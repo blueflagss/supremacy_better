@@ -93,7 +93,8 @@ public:
 	void ThirdpersonThink( );
 	void Hitmarker( );
 	void NoSmoke( );
-	void think( );
+    void ManualIndicators( );
+    void think( );
 	void Spectators( );
 	void StatusIndicators( );
 	void SpreadCrosshair( );
@@ -109,7 +110,6 @@ public:
 	void DrawSkeleton( Player* player, int opacity );
 	void RenderGlow( );
 	void DrawHitboxMatrix( LagRecord* record, Color col, float time );
-    void DrawHitboxMatrix ( Player *player, BoneArray *bones, Color col, float time );
     void DrawBeams( );
 	void DebugAimbotPoints( Player* player );
 };

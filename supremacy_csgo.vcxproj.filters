@@ -39,9 +39,6 @@
     <ClInclude Include="aimbot.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="bonesetup.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="csgo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -345,29 +342,38 @@
     <ClInclude Include="modelcache.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="bone_setup.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="ik_context.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="bitvec.h">
+    <ClInclude Include="threading\atomic_lock.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="primordial.h">
+    <ClInclude Include="threading\includes.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="bell.h">
+    <ClInclude Include="threading\mutex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="cod.h">
+    <ClInclude Include="threading\named_semaphores.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="wavheader.h">
+    <ClInclude Include="threading\packed_heap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="threading\semaphores.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="threading\shared_mutex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="threading\threading.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="bonesetup.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="client.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -542,10 +548,37 @@
     <ClCompile Include="rebuilt.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="matrix.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="bone_setup.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="ik_context.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="wavheader.cpp">
+    <ClCompile Include="threading\atomic_lock.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="threading\mutex.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="threading\named_semaphores.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="threading\packed_heap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="threading\semaphores.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="threading\shared_mutex.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="threading\threading.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="entity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

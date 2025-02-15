@@ -12,15 +12,16 @@ struct AnimationBackup_t {
 	vec3_t           m_velocity, m_abs_velocity;
 	int              m_flags, m_eflags;
 	float            m_duck, m_body;
-	vec3_t			 m_mins, m_maxs;
+	float			 m_simtime;
 	C_AnimationLayer m_layers[ 13 ];
 };
 
 struct HitscanData_t {
 	float  m_damage;
 	vec3_t m_pos;
+	int	   m_hitbox;
 
-	__forceinline HitscanData_t( ) : m_damage{ 0.f }, m_pos{} {}
+	__forceinline HitscanData_t( ) : m_damage{ 0.f }, m_pos{}, m_hitbox { } {}
 };
 
 struct HitscanBox_t {
@@ -62,23 +63,24 @@ public:
 	// data about the LBY proxy.
 	float m_body;
 	float m_old_body;
+	bool m_delay_shot;
 
 	//std::deque< float >            m_lbyt_update;
 	//std::deque< float >			   m_prefer_stand;
 	//std::deque< float >            m_prefer_air;
 
 public:
-	VelocityDetail_t FixVelocity ( C_AnimationLayer *animlayers, LagRecord *previous, Player *player );
+	bool CheckHitchance( Player* player, const ang_t& angle );
 	void UpdateAnimations( LagRecord* record );
-	void UpdatePlayer ( AnimationBackup_t backup, LagRecord *record );
+	void Apply( Player* player );
 	void OnNetUpdate( Player* player );
 	void OnRoundStart( Player* player );
 	void SetupHitboxes( LagRecord* record, bool history );
 	bool SetupHitboxPoints( LagRecord* record, BoneArray* bones, int index, std::vector< vec3_t >& points );
-	bool GetBestAimPosition( vec3_t& aim, float& damage, LagRecord* record );
+	bool GetBestAimPosition( vec3_t& aim, int& hitbox, float& damage, LagRecord* record );
 
 public:
-	void reset( ) {
+	void post_update( ) {
 		m_player       = nullptr;
 		m_spawn        = 0.f;
 		m_walk_record  = LagRecord{};
@@ -142,13 +144,13 @@ public:
 	bool m_stop;
 
 public:
-	__forceinline void reset( ) {
+	__forceinline void post_update( ) {
 		// reset aimbot data.
-		init( );
+		Init( );
 
 		// reset all players data.
 		for( auto& p : m_players )
-			p.reset( );
+			p.post_update( );
 	}
 
 	__forceinline bool IsValidTarget( Player* player ) {
@@ -172,18 +174,18 @@ public:
 
 public:
 	// aimbot.
-	void init( );
+	void Init( );
 	void StripAttack( );
 	void UpdateLocal ( );
 	void think( );
 	void Slow ( CUserCmd *ucmd );
 	void find( );
 	bool CheckHitchance( Player* player, const ang_t& angle );
+	vec3_t GetServerShootPosition( const ang_t& wanted_view_angles );
 	bool SelectTarget( LagRecord* record, const vec3_t& aim, float damage );
-	void apply( );
+	void update( );
 	void NoSpread( );
 	bool FixVelocity ( Player *ent, LagRecord *previous, vec3_t &vel, C_AnimationLayer *animlayers, const vec3_t &origin );
-	void Stop ( CUserCmd *cmd, float target_speed, vec3_t &cur_velocity, vec3_t a8, bool compensate_for_duck );
 
 	// knifebot.
 	void knife( );

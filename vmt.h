@@ -24,7 +24,7 @@ public:
 
 	// ctor.
 	__forceinline VMT( Address base, bool rtti = true ) : m_base{}, m_old_vmt{}, m_new_vmt{}, m_size{}, m_rtti{} {
-		init( base, rtti );
+		Init( base, rtti );
 	}
 
 	// dtor.
@@ -46,7 +46,7 @@ public:
 	}
 
 	// setup and replace vmt.
-	__forceinline void init( Address base, bool rtti = true ) {
+	__forceinline void Init( Address base, bool rtti = true ) {
 		// save base class.
 		m_base = base;
 

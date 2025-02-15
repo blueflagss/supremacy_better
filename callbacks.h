@@ -4,9 +4,6 @@ namespace callbacks {
 	void SkinUpdate( );
 	void ForceFullUpdate( );
 	void ToggleThirdPerson( );
-	void ManualLeft ( );
-	void ManualRight ( );
-	void ManualBack ( );
 	void ToggleFakeLatency( );
     void ToggleKillfeed( );
 	void SaveHotkeys( );

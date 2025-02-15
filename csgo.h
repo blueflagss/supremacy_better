@@ -112,7 +112,6 @@ public:
 	ConVar *cl_forwardspeed;
 	ConVar *weapon_debug_spread_show;
 	ConVar *net_showfragments;
-	ConVar *net_earliertempents;
 	ConVar *molotov_throw_detonate_time;
 	ConVar *weapon_molotov_maxdetonateslope;
 	ConVar *weapon_recoil_scale;
@@ -124,6 +123,7 @@ public:
 	ConVar *sv_clip_penetration_traces_to_players;
 	ConVar *weapon_accuracy_shotgun_spread_patterns;
 	ConVar *cl_foot_contact_shadows;
+	ConVar* cam_ideallag;
 	ConVar *cl_extrapolate;
 	ConVar *cl_csm_shadows;
 
@@ -131,6 +131,7 @@ public:
 	// functions.
 	GetGlowObjectManager_t   GetGlowObjectManager;
 	MD5_PseudoRandom_t	     MD5_PseudoRandom;
+	Address				     tier0_allocated_thread_ids;
 	Address                  SetAbsAngles;
 	Address				     SetAbsOrigin;
 	Address                  InvalidateBoneCache;
@@ -177,15 +178,14 @@ public:
 
 public:
 	// initialize class.
-	bool init();
+	bool Init();
 };
 
 extern CSGO g_csgo;
 
 namespace game {
 	__forceinline float GetClientInterpAmount() {
-		static auto min = g_csgo.m_cvar->FindVar ( HASH ( "sv_client_min_interp_ratio" ) );
-		return std::max < float > ( g_csgo.cl_interp->GetFloat ( ), min->GetFloat ( ) / g_csgo.cl_updaterate->GetFloat ( ) );
+		return std::max(g_csgo.cl_interp->GetFloat(), g_csgo.cl_interp_ratio->GetFloat() / g_csgo.cl_updaterate->GetFloat());
 	}
 
 	__forceinline int TIME_TO_TICKS(float time) {

@@ -11,15 +11,13 @@ int Hooks::DebugSpreadGetInt( ) {
 	return g_hooks.m_debug_spread.GetOldMethod< GetInt_t >( ConVar::GETINT )( this );
 }
 
-bool Hooks::NetEarlierTempEntsGetBool ( ) {
-	Stack stack;
+bool Hooks::NetEarlierTempEnts( ) {
+	static auto CL_ReadPackets = pattern::find( g_csgo.m_client_dll, XOR( "85 C0 74 05 E8 ? ? ? ? 84 DB 0F 84" ) ).get< void* >( );
 
-	static auto CL_ReadPackets = pattern::find ( g_csgo.m_engine_dll, XOR ( "85 C0 74 05 E8 ? ? ? ? 84 DB 0F 84" ) ).as < void* > ( );
-
-	if ( _ReturnAddress ( ) == CL_ReadPackets )
+	if ( _ReturnAddress( ) == CL_ReadPackets )
 		return true;
 
-	return g_hooks.m_net_earlier_temp_ents.GetOldMethod< GetBool_t > ( ConVar::GETBOOL )( this );
+	return g_hooks.net_earliertempents.GetOldMethod< GetInt_t >( ConVar::GETINT )( this );
 }
 
 bool Hooks::NetShowFragmentsGetBool( ) {

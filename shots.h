@@ -2,10 +2,10 @@
 
 class ShotRecord {
 public:
-	__forceinline ShotRecord( ) : m_target{}, m_record{}, m_time{}, m_lat{}, m_damage{}, m_pos{}, m_matched{} {}
+	__forceinline ShotRecord( ) : m_target{}, m_record{}, m_time{}, m_lat{}, m_damage{}, m_pos{}, m_matched{} { }
 
 public:
-	Player*    m_target;
+	Player* m_target;
 	LagRecord* m_record;
 	float      m_time, m_lat, m_damage;
 	vec3_t     m_pos;
@@ -14,18 +14,19 @@ public:
 
 class VisualImpactData_t {
 public:
-    vec3_t m_impact_pos, m_shoot_pos;
-    int    m_tickbase;
-    bool   m_ignore, m_hit_player;
+	vec3_t m_impact_pos, m_shoot_pos;
+	int    m_tickbase;
+	bool   m_ignore, m_hit_player;
 
 public:
-    __forceinline VisualImpactData_t( const vec3_t &impact_pos, const vec3_t &shoot_pos, int tickbase ) : 
-        m_impact_pos{ impact_pos }, m_shoot_pos{ shoot_pos }, m_tickbase{ tickbase }, m_ignore{ false }, m_hit_player{ false } {}
+	__forceinline VisualImpactData_t( const vec3_t& impact_pos, const vec3_t& shoot_pos, int tickbase ) :
+		m_impact_pos{ impact_pos }, m_shoot_pos{ shoot_pos }, m_tickbase{ tickbase }, m_ignore{ false }, m_hit_player{ false } {
+	}
 };
 
 class ImpactRecord {
 public:
-	__forceinline ImpactRecord( ) : m_shot{}, m_pos{}, m_tick{} {}
+	__forceinline ImpactRecord( ) : m_shot{}, m_pos{}, m_tick{} { }
 
 public:
 	ShotRecord* m_shot;
@@ -35,7 +36,7 @@ public:
 
 class HitRecord {
 public:
-	__forceinline HitRecord( ) : m_impact{}, m_group{ -1 }, m_damage{} {}
+	__forceinline HitRecord( ) : m_impact{}, m_group{ -1 }, m_damage{} { }
 
 public:
 	ImpactRecord* m_impact;
@@ -45,8 +46,8 @@ public:
 
 class Shots {
 private:
-    std::array< std::string, 8 > m_groups = {
-        XOR( "body" ),
+	std::array< std::string, 8 > m_groups = {
+		XOR( "body" ),
 		XOR( "head" ),
 		XOR( "chest" ),
 		XOR( "stomach" ),
@@ -54,7 +55,7 @@ private:
 		XOR( "right arm" ),
 		XOR( "left leg" ),
 		XOR( "right leg" )
-    };
+	};
 
 public:
 	void OnShotFire( Player* target, float damage, int bullets, LagRecord* record );
@@ -63,7 +64,7 @@ public:
 
 public:
 	std::deque< ShotRecord >          m_shots;
-    std::vector< VisualImpactData_t > m_vis_impacts;
+	std::vector< VisualImpactData_t > m_vis_impacts;
 	std::deque< ImpactRecord >        m_impacts;
 	std::deque< HitRecord >           m_hits;
 };

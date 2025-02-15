@@ -128,7 +128,7 @@ typedef enum {
 	ACT_WALK_SCARED,
 	ACT_RUN_SCARED,
 	ACT_VICTORY_DANCE,		// killed a player, do a victory dance.
-	ACT_DIE_HEADSHOT,		// die, hit in head. 
+	ACT_DIE_HEADSHOT,		// die, hit in head.
 	ACT_DIE_CHESTSHOT,		// die, hit in chest
 	ACT_DIE_GUTSHOT,		// die, hit in gut
 	ACT_DIE_BACKSHOT,		// die, hit in back
@@ -728,7 +728,6 @@ typedef enum {
 	ACT_MP_ATTACK_SWIM_GRENADE_PRIMARY,
 	ACT_MP_ATTACK_AIRWALK_GRENADE_PRIMARY,
 
-
 	// Secondary
 	ACT_MP_STAND_SECONDARY,
 	ACT_MP_CROUCH_SECONDARY,
@@ -983,7 +982,6 @@ typedef enum {
 	ACT_MP_GESTURE_VC_NODYES_PDA,
 	ACT_MP_GESTURE_VC_NODNO_PDA,
 
-
 	ACT_VM_UNUSABLE,
 	ACT_VM_UNUSABLE_TO_USABLE,
 	ACT_VM_USABLE_TO_UNUSABLE,
@@ -1147,7 +1145,6 @@ typedef enum {
 	ACT_DOTA_CHANNEL_END_ABILITY_3,
 	ACT_DOTA_CHANNEL_END_ABILITY_4,
 
-
 	// Portal2
 	ACT_MP_RUN_SPEEDPAINT,  // running on speed paint
 	ACT_MP_LONG_FALL, // falling a LONG way
@@ -1157,17 +1154,14 @@ typedef enum {
 	ACT_MP_RUN_SPEEDPAINT_PRIMARY, // player with portalgun running on speed paint
 	ACT_MP_DROWNING_PRIMARY, // drowning while holding portalgun
 	ACT_MP_LONG_FALL_PRIMARY, // falling a LONG way while holding portalgun
-	ACT_MP_TRACTORBEAM_FLOAT_PRIMARY, // floating in a tractor beam while holding portalgun 
+	ACT_MP_TRACTORBEAM_FLOAT_PRIMARY, // floating in a tractor beam while holding portalgun
 	ACT_MP_DEATH_CRUSH_PRIMARY,
-
 
 	// csgo death anims that don't require direction (direction is pose-param driven for more granularity)
 	ACT_DIE_STAND,
 	ACT_DIE_STAND_HEADSHOT,
 	ACT_DIE_CROUCH,
 	ACT_DIE_CROUCH_HEADSHOT,
-
-
 
 	// CSGO action activities
 	ACT_CSGO_NULL,
@@ -1210,110 +1204,6 @@ typedef enum {
 	LAST_SHARED_ACTIVITY,
 } Activity;
 
-enum PoseParam_t {
-	POSE_STRAFE_YAW,
-	POSE_STAND,
-	POSE_LEAN_YAW,
-	POSE_SPEED,
-	POSE_LADDER_YAW,
-	POSE_LADDER_SPEED,
-	POSE_JUMP_FALL,
-	POSE_MOVE_YAW,
-	POSE_MOVE_BLEND_CROUCH,
-	POSE_MOVE_BLEND_WALK,
-	POSE_MOVE_BLEND_RUN,
-	POSE_BODY_YAW,
-	POSE_BODY_PITCH,
-	POSE_AIM_BLEND_STAND_IDLE,
-	POSE_AIM_BLEND_STAND_WALK,
-	POSE_AIM_BLEND_STAND_RUN,
-	POSE_AIM_BLEND_COURCH_IDLE,
-	POSE_AIM_BLEND_CROUCH_WALK,
-	POSE_DEATH_YAW
-};
-
-enum animstate_pose_param_idx_t {
-	PLAYER_POSE_PARAM_FIRST = 0,
-	PLAYER_POSE_PARAM_LEAN_YAW = PLAYER_POSE_PARAM_FIRST,
-	PLAYER_POSE_PARAM_SPEED,
-	PLAYER_POSE_PARAM_LADDER_SPEED,
-	PLAYER_POSE_PARAM_LADDER_YAW,
-	PLAYER_POSE_PARAM_MOVE_YAW,
-	PLAYER_POSE_PARAM_RUN,
-	PLAYER_POSE_PARAM_BODY_YAW,
-	PLAYER_POSE_PARAM_BODY_PITCH,
-	PLAYER_POSE_PARAM_DEATH_YAW,
-	PLAYER_POSE_PARAM_STAND,
-	PLAYER_POSE_PARAM_JUMP_FALL,
-	PLAYER_POSE_PARAM_AIM_BLEND_STAND_IDLE,
-	PLAYER_POSE_PARAM_AIM_BLEND_CROUCH_IDLE,
-	PLAYER_POSE_PARAM_STRAFE_DIR,
-	PLAYER_POSE_PARAM_AIM_BLEND_STAND_WALK,
-	PLAYER_POSE_PARAM_AIM_BLEND_STAND_RUN,
-	PLAYER_POSE_PARAM_AIM_BLEND_CROUCH_WALK,
-	PLAYER_POSE_PARAM_MOVE_BLEND_WALK,
-	PLAYER_POSE_PARAM_MOVE_BLEND_RUN,
-	PLAYER_POSE_PARAM_MOVE_BLEND_CROUCH_WALK,
-	//PLAYER_POSE_PARAM_STRAFE_CROSS,
-	PLAYER_POSE_PARAM_COUNT,
-};
-
-struct animstate_pose_param_cache_t {
-	bool m_bInitialized;
-	int	m_nIndex;
-	const char *m_szName;
-
-	bool Init ( Player *pPlayer, const char *szPoseParamName ) {
-		g_csgo.m_model_cache->BeginLock ( );
-		m_szName = szPoseParamName;
-		m_nIndex = pPlayer->LookupPoseParameter ( szPoseParamName );
-		if ( m_nIndex != -1 ) {
-			m_bInitialized = true;
-		}
-		g_csgo.m_model_cache->EndLock ( );
-
-		return m_bInitialized;
-	}
-
-	float GetValue ( Player *pPlayer ) {
-		if ( !m_bInitialized ) {
-			Init ( pPlayer, m_szName );
-		}
-		if ( m_bInitialized && pPlayer ) {
-			return pPlayer->GetPoseParameter ( m_nIndex );
-		}
-		return 0;
-	}
-
-	void SetValue ( Player *pPlayer, float flValue ) {
-		if ( !m_bInitialized ) {
-			Init ( pPlayer, m_szName );
-		}
-		if ( m_bInitialized && pPlayer ) {
-			g_csgo.m_model_cache->BeginLock ( );
-			pPlayer->SetPoseParameter ( m_nIndex, flValue );
-			g_csgo.m_model_cache->EndLock ( );
-		}
-	}
-};
-
-enum AnimationLayer_t {
-	ANIMATION_LAYER_AIMMATRIX = 0,
-	ANIMATION_LAYER_WEAPON_ACTION,
-	ANIMATION_LAYER_WEAPON_ACTION_RECROUCH,
-	ANIMATION_LAYER_ADJUST,
-	ANIMATION_LAYER_MOVEMENT_JUMP_OR_FALL,
-	ANIMATION_LAYER_MOVEMENT_LAND_OR_CLIMB,
-	ANIMATION_LAYER_MOVEMENT_MOVE,
-	ANIMATION_LAYER_MOVEMENT_STRAFECHANGE,
-	ANIMATION_LAYER_WHOLE_BODY,
-	ANIMATION_LAYER_FLASHED,
-	ANIMATION_LAYER_FLINCH,
-	ANIMATION_LAYER_ALIVELOOP,
-	ANIMATION_LAYER_LEAN,
-	ANIMATION_LAYER_COUNT,
-};
-
 #define CSGO_ANIM_AIMMATRIX_DEFAULT_YAW_MAX 58.0f
 #define CSGO_ANIM_AIMMATRIX_DEFAULT_YAW_MIN -58.0f
 #define CSGO_ANIM_AIMMATRIX_DEFAULT_PITCH_MAX 90.0f
@@ -1343,144 +1233,6 @@ struct procedural_foot_t {
 	vec3_t m_vecPlantVel;
 	float m_flLockAmount;
 	float m_flLastPlantTime;
-};
-
-class CCSGOGamePlayerAnimState {
-public:
-	const int *m_pLayerOrderPreset;
-	bool m_bFirstRunSinceInit;
-	bool m_bFirstFootPlantSinceInit;
-	int m_iLastUpdateFrame;
-	float m_flEyePositionSmoothLerp;
-	float m_flStrafeChangeWeightSmoothFalloff;
-	aimmatrix_transition_t m_tStandWalkAim;
-	aimmatrix_transition_t m_tStandRunAim;
-	aimmatrix_transition_t m_tCrouchWalkAim;
-	int m_cachedModelIndex;
-	float m_flStepHeightLeft;
-	float m_flStepHeightRight;
-	Weapon *m_pWeaponLastBoneSetup;
-	Player *m_pPlayer;
-	Weapon *m_pWeapon;
-	Weapon *m_pWeaponLast;
-	float m_flLastUpdateTime;
-	int m_nLastUpdateFrame;
-	float m_flLastUpdateIncrement;
-	float m_flEyeYaw;
-	float m_flEyePitch;
-	float m_flFootYaw;
-	float m_flFootYawLast;
-	float m_flMoveYaw;
-	float m_flMoveYawIdeal;
-	float m_flMoveYawCurrentToIdeal;
-	float m_flTimeToAlignLowerBody;
-	float m_flPrimaryCycle;
-	float m_flMoveWeight;
-	float m_flMoveWeightSmoothed;
-	float m_flAnimDuckAmount;
-	float m_flDuckAdditional;
-	float m_flRecrouchWeight;
-	vec3_t	m_vecPositionCurrent;
-	vec3_t	m_vecPositionLast;
-	vec3_t	m_vecVelocity;
-	vec3_t	m_vecVelocityNormalized;
-	vec3_t	m_vecVelocityNormalizedNonZero;
-	float m_flVelocityLengthXY;
-	float m_flVelocityLengthZ;
-	float m_flSpeedAsPortionOfRunTopSpeed;
-	float m_flSpeedAsPortionOfWalkTopSpeed;
-	float m_flSpeedAsPortionOfCrouchTopSpeed;
-	float m_flDurationMoving;
-	float m_flDurationStill;
-	bool m_bOnGround;
-	bool m_bLanding;
-	float m_flJumpToFall;
-	float m_flDurationInAir;
-	float m_flLeftGroundHeight;
-	float m_flLandAnimMultiplier;
-	float m_flWalkToRunTransition;
-	bool m_bLandedOnGroundThisFrame;
-	bool m_bLeftTheGroundThisFrame;
-	float m_flInAirSmoothValue;
-	bool m_bOnLadder;
-	float m_flLadderWeight;
-	float m_flLadderSpeed;
-	bool m_bWalkToRunTransitionState;
-	bool m_bDefuseStarted;
-	bool m_bPlantAnimStarted;
-	bool m_bTwitchAnimStarted;
-	bool m_bAdjustStarted;
-	CUtlVector< uint16_t > m_ActivityModifiers;
-	float m_flNextTwitchTime;
-	float m_flTimeOfLastKnownInjury;
-	float m_flLastVelocityTestTime;
-	vec3_t m_vecVelocityLast;
-	vec3_t m_vecTargetAcceleration;
-	vec3_t m_vecAcceleration;
-	float m_flAccelerationWeight;
-	float m_flAimMatrixTransition;
-	float m_flAimMatrixTransitionDelay;
-	bool m_bFlashed;
-	float m_flStrafeChangeWeight;
-	float m_flStrafeChangeTargetWeight;
-	float m_flStrafeChangeCycle;
-	int m_nStrafeSequence;
-	bool m_bStrafeChanging;
-	float m_flDurationStrafing;
-	float m_flFootLerp;
-	bool m_bFeetCrossed;
-	bool m_bPlayerIsAccelerating;
-	animstate_pose_param_cache_t m_tPoseParamMappings [ 20 ];
-	float m_flDurationMoveWeightIsTooHigh;
-	float m_flStaticApproachSpeed;
-	int m_nPreviousMoveState;
-	float m_flStutterStep;
-	float m_flActionWeightBiasRemainder;
-	procedural_foot_t m_footLeft;
-	procedural_foot_t m_footRight;
-	float m_flCameraSmoothHeight;
-	bool m_bSmoothHeightValid;
-	float m_flLastTimeVelocityOverTen;
-	float m_flAimYawMin;
-	float m_flAimYawMax;
-	float m_flAimPitchMin;
-	float m_flAimPitchMax;
-	int m_nAnimstateModelVersion;
-
-	__forceinline const char *GetWeaponPrefix ( ) {
-		static auto oGetWeaponPrefix = pattern::find ( g_csgo.m_client_dll, XOR ( "53 56 8B F1 57 33 FF 8B 4E 60 8B 01 FF 90 ? ? ? ? 89 46 64 85" ) ).as < const char *( __thiscall * ) ( void * ) > ( );
-		return oGetWeaponPrefix ( this );
-	}
-};
-
-class activity_modifiers_wrapper {
-private:
-	//MEMBER_REL ( "server.dll", "?", add_activity_modifier ( const char *name ), void ( __thiscall * )( void *, const char * ) )( name )
-	uint32_t gap [ 0x4D ] { 0 };
-	CUtlVector<uint16_t> modifiers { };
-public:
-	//CCSGOGamePlayerAnimState *m_state;
-
-	activity_modifiers_wrapper ( ) = default;
-
-	explicit activity_modifiers_wrapper ( CUtlVector< uint16_t > current_modifiers ) {
-		//m_state = state;
-
-		modifiers.RemoveAll ( );
-		modifiers.GrowVector ( current_modifiers.Count ( ) );
-
-		for ( auto i = 0; i < current_modifiers.Count ( ); i++ )
-			modifiers [ i ] = current_modifiers [ i ];
-	}
-
-	void add_modifier ( const char *name ) {
-		static auto add_activity_modifier = pattern::find ( g_csgo.m_server_dll, XOR ( "55 8B EC 8B 55 08 83 EC 24 56 8B F1 85 D2 0F 84 ? ? ? ? 8D 45 DC" ) ).as < void ( __thiscall * )( void *, const char * ) > ( );
-		add_activity_modifier ( this, name );
-	}
-
-	CUtlVector<uint16_t> get ( ) const {
-		return modifiers;
-	}
 };
 
 namespace valve_math {
@@ -1629,32 +1381,17 @@ namespace valve_math {
 }
 
 namespace rebuilt {
-	void SetSequence ( CCSGOGamePlayerAnimState *state, int layer_idx, int sequence );
-	int SelectWeightedSequence ( CCSGOGamePlayerAnimState *state, int act );
-	void UpdateAnimationState ( CCSGOGamePlayerAnimState *state, float eyeYaw, float eyePitch, bool bForce );
-	void IncrementLayerWeight ( CCSGOGamePlayerAnimState *state, int layer_idx );
-	void SetupWholeBodyAction ( CCSGOGamePlayerAnimState *state );
-	void SetupLean ( CCSGOGamePlayerAnimState *state );
-	void SetCycle ( CCSGOGamePlayerAnimState *state, int layer_idx, float cycle );
-	void SetWeightDeltaRate ( CCSGOGamePlayerAnimState *state, int layer_idx, float old_weight );
-	void IncrementLayerCycleWeightRateGeneric ( CCSGOGamePlayerAnimState *state, int layer_idx );
-	void Update ( CCSGOPlayerAnimState *animstate, const ang_t &angles );
+	void SetSequence ( CCSGOPlayerAnimState *state, int layer_idx, int sequence );
+	int SelectWeightedSequence ( CCSGOPlayerAnimState *state, int act );
+	void SetCycle ( CCSGOPlayerAnimState *state, int layer_idx, float cycle );
+	void SetWeightDeltaRate ( CCSGOPlayerAnimState *state, int layer_idx, float old_weight );
+	void IncrementLayerCycleWeightRateGeneric ( CCSGOPlayerAnimState *state, int layer_idx );
+	void Update ( CCSGOPlayerAnimState *animstate, const ang_t &angles, int tick );
 	void InvalidatePhysicsRecursive ( void *player, int change_flags );
-	void SetWeight ( CCSGOGamePlayerAnimState *state, int layer_idx, float weight );
-	float GetLayerIdealWeightFromSequenceCycle ( CCSGOGamePlayerAnimState *state, int layer_idx );
-	bool IsLayerSequenceCompleted ( CCSGOGamePlayerAnimState *state, int layer_idx );
-	void IncrementLayerCycle ( CCSGOGamePlayerAnimState *state, int layer_idx, bool allow_loop );
-	int GetLayerActivity ( CCSGOGamePlayerAnimState *state, AnimationLayer_t layer_idx );
+	void SetWeight ( CCSGOPlayerAnimState *state, int layer_idx, float weight );
+	float GetLayerIdealWeightFromSequenceCycle ( CCSGOPlayerAnimState *state, int layer_idx );
+	bool IsLayerSequenceCompleted ( CCSGOPlayerAnimState *state, int layer_idx );
+	void IncrementLayerCycle ( CCSGOPlayerAnimState *state, int layer_idx, bool allow_loop );
+	int GetLayerActivity ( CCSGOPlayerAnimState *state, AnimationLayer_t layer_idx );
 	void CalculatePoses ( CCSGOPlayerAnimState *state, Player *player, float *poses, float feet_yaw );
-	void DoAnimationEvent ( CCSGOGamePlayerAnimState *state, int event, int data );
-	void SetupVelocity ( CCSGOGamePlayerAnimState *state );
-	void UpdateAnimLayer ( CCSGOGamePlayerAnimState *state, int layer_idx, int seq, float playback_rate, float weight, float cycle );
-	void SetupMovement ( CCSGOGamePlayerAnimState *state );
-	void SetupAliveLoop ( CCSGOGamePlayerAnimState *state );
-	void SetupFlashedReaction ( CCSGOGamePlayerAnimState *state );
-	void SetupFlinch ( CCSGOGamePlayerAnimState *state );
-	void SetupAimMatrix ( CCSGOGamePlayerAnimState *state );
-	bool CacheSequences ( CCSGOGamePlayerAnimState *state );
-	void SetupWeaponAction ( CCSGOGamePlayerAnimState *state );
-	void UpdateActivityModifiers ( CCSGOGamePlayerAnimState *state );
 }

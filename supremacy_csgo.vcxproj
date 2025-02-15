@@ -5,10 +5,6 @@
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="ReleaseDBG|Win32">
-      <Configuration>ReleaseDBG</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
     <ProjectConfiguration Include="ReleaseEx|Win32">
       <Configuration>ReleaseEx</Configuration>
       <Platform>Win32</Platform>
@@ -42,13 +38,6 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseDBG|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>MultiByte</CharacterSet>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseEx|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
@@ -74,9 +63,6 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseDBG|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseEx|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
@@ -87,10 +73,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>
     </LinkIncremental>
-    <OutDir>.\output\release\</OutDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseDBG|Win32'">
-    <LinkIncremental>false</LinkIncremental>
     <OutDir>.\output\release\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseEx|Win32'">
@@ -110,7 +92,7 @@
       <SDLCheck>true</SDLCheck>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild />
-      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
       <BasicRuntimeChecks />
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <CompileAs>CompileAsCpp</CompileAs>
@@ -123,67 +105,36 @@
     </Link>
     <Link>
       <FullProgramDatabaseFile>true</FullProgramDatabaseFile>
-      <AdditionalDependencies>winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>TurnOffAllWarnings</WarningLevel>
-      <Optimization>Disabled</Optimization>
+      <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
       <AdditionalOptions>/Zc:threadSafeInit- %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <CompileAs>CompileAsCpp</CompileAs>
       <PreprocessorDefinitions>NDEBUG;SUPREMACY_CSGO_EXPORTS;_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <DebugInformationFormat>None</DebugInformationFormat>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <FloatingPointModel>Fast</FloatingPointModel>
       <StringPooling>true</StringPooling>
       <Cpp0xSupport>true</Cpp0xSupport>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <FullProgramDatabaseFile>true</FullProgramDatabaseFile>
-      <AdditionalDependencies>winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseDBG|Win32'">
-    <ClCompile>
-      <WarningLevel>TurnOffAllWarnings</WarningLevel>
-      <Optimization>Disabled</Optimization>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
-      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
-      <AdditionalOptions>/Zc:threadSafeInit- %(AdditionalOptions)</AdditionalOptions>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <CompileAs>CompileAsCpp</CompileAs>
-      <PreprocessorDefinitions>NDEBUG;SUPREMACY_CSGO_EXPORTS;_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-      <DebugInformationFormat>None</DebugInformationFormat>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <LanguageStandard>stdcpp17</LanguageStandard>
-      <FloatingPointModel>Fast</FloatingPointModel>
-      <StringPooling>true</StringPooling>
-      <Cpp0xSupport>true</Cpp0xSupport>
-    </ClCompile>
-    <Link>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
-      <FullProgramDatabaseFile>true</FullProgramDatabaseFile>
-      <AdditionalDependencies>winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseEx|Win32'">
@@ -213,7 +164,6 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <FullProgramDatabaseFile>true</FullProgramDatabaseFile>
-      <AdditionalDependencies>winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Ship|Win32'">
@@ -244,7 +194,6 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <FullProgramDatabaseFile>false</FullProgramDatabaseFile>
-      <AdditionalDependencies>winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -254,9 +203,7 @@
     <ClInclude Include="base64.h" />
     <ClInclude Include="basehandle.h" />
     <ClInclude Include="beams.h" />
-    <ClInclude Include="bell.h" />
-    <ClInclude Include="bitvec.h" />
-    <ClInclude Include="bonesetup.h" />
+    <ClInclude Include="bone_setup.h" />
     <ClInclude Include="buffer.h" />
     <ClInclude Include="button.h" />
     <ClInclude Include="callbacks.h" />
@@ -266,7 +213,6 @@
     <ClInclude Include="clientclass.h" />
     <ClInclude Include="clientdll.h" />
     <ClInclude Include="clientmode.h" />
-    <ClInclude Include="cod.h" />
     <ClInclude Include="color.h" />
     <ClInclude Include="colorpicker.h" />
     <ClInclude Include="config.h" />
@@ -328,7 +274,6 @@
     <ClInclude Include="penetration.h" />
     <ClInclude Include="pred.h" />
     <ClInclude Include="prediction.h" />
-    <ClInclude Include="primordial.h" />
     <ClInclude Include="rebuilt.h" />
     <ClInclude Include="render.h" />
     <ClInclude Include="resolver.h" />
@@ -343,6 +288,14 @@
     <ClInclude Include="surface.h" />
     <ClInclude Include="syscall.h" />
     <ClInclude Include="tab.h" />
+    <ClInclude Include="threading\atomic_lock.h" />
+    <ClInclude Include="threading\includes.hpp" />
+    <ClInclude Include="threading\mutex.h" />
+    <ClInclude Include="threading\named_semaphores.h" />
+    <ClInclude Include="threading\packed_heap.h" />
+    <ClInclude Include="threading\semaphores.h" />
+    <ClInclude Include="threading\shared_mutex.h" />
+    <ClInclude Include="threading\threading.h" />
     <ClInclude Include="tinyformat.h" />
     <ClInclude Include="trace.h" />
     <ClInclude Include="trampoline.h" />
@@ -353,14 +306,13 @@
     <ClInclude Include="vector3.h" />
     <ClInclude Include="visuals.h" />
     <ClInclude Include="vmt.h" />
-    <ClInclude Include="wavheader.h" />
     <ClInclude Include="winapir.h" />
     <ClInclude Include="x86.h" />
     <ClInclude Include="xorstr.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="aimbot.cpp" />
-    <ClCompile Include="bonesetup.cpp" />
+    <ClCompile Include="bone_setup.cpp" />
     <ClCompile Include="buffer.c" />
     <ClCompile Include="button.cpp" />
     <ClCompile Include="callbacks.cpp" />
@@ -372,6 +324,7 @@
     <ClCompile Include="config.cpp" />
     <ClCompile Include="detours.cpp" />
     <ClCompile Include="edit.cpp" />
+    <ClCompile Include="entity.cpp" />
     <ClCompile Include="events.cpp" />
     <ClCompile Include="firebullets.cpp" />
     <ClCompile Include="hde\hde32.c" />
@@ -381,6 +334,7 @@
     <ClCompile Include="keybind.cpp" />
     <ClCompile Include="matchframework.cpp" />
     <ClCompile Include="materialsystem.cpp" />
+    <ClCompile Include="matrix.cpp" />
     <ClCompile Include="rebuilt.cpp" />
     <ClCompile Include="shadowmgr.cpp" />
     <ClCompile Include="csgo.cpp" />
@@ -411,6 +365,13 @@
     <ClCompile Include="pred.cpp" />
     <ClCompile Include="netchannel.cpp" />
     <ClCompile Include="render.cpp" />
+    <ClCompile Include="threading\atomic_lock.cpp" />
+    <ClCompile Include="threading\mutex.cpp" />
+    <ClCompile Include="threading\named_semaphores.cpp" />
+    <ClCompile Include="threading\packed_heap.cpp" />
+    <ClCompile Include="threading\semaphores.cpp" />
+    <ClCompile Include="threading\shared_mutex.cpp" />
+    <ClCompile Include="threading\threading.cpp" />
     <ClCompile Include="trampoline.c" />
     <ClCompile Include="viewrender.cpp" />
     <ClCompile Include="resolver.cpp" />
@@ -418,7 +379,6 @@
     <ClCompile Include="renderview.cpp" />
     <ClCompile Include="slider.cpp" />
     <ClCompile Include="visuals.cpp" />
-    <ClCompile Include="wavheader.cpp" />
     <ClCompile Include="wndproc.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

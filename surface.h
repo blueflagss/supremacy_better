@@ -76,7 +76,7 @@ public:
     __forceinline Vertex( const vec2_t& pos ) : m_pos{ pos }, m_coord{ 0.f, 0.f } {}
     __forceinline Vertex( const vec2_t& pos, const vec2_t& coord ) : m_pos{ pos }, m_coord{ coord } {}
 
-	__forceinline void init( const vec2_t& pos, const vec2_t &coord = { 0, 0 } ) {
+	__forceinline void Init( const vec2_t& pos, const vec2_t &coord = { 0, 0 } ) {
         m_pos   = pos;
         m_coord = coord;
 	}

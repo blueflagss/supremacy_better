@@ -6,7 +6,7 @@ Also thank you to pyro for not making faststop work LMAO
 
 Dead project as well along with HVH dying to the core.
 
-(c) penumbra
+`(c) penumbra`
 
 # supremacy
 Supremacy Counter-Strike: Global Offensive cheat, by https://interwebz.cc/. Good for learning, everything is commented. Open Source.
